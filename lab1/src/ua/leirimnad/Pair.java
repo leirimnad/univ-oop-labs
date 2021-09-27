@@ -29,4 +29,21 @@ public class Pair<L, R> {
     public R right() {
         return right;
     }
+
+    /**
+     * Sets the left element
+     * @param l Element to be set
+     */
+    public void setLeft(L l) { this.left = l; }
+
+    /**
+     * Sets the right element
+     * @param r Element to be set
+     */
+    public void setRight(R r) { this.right = r; }
+
+    @Override
+    public String toString() {
+        return "{" + left + ", " + right + '}';
+    }
 }
