@@ -2,10 +2,15 @@ package ua.leirimnad;
 
 import java.util.Objects;
 
+/**
+ * A heap implementation of priority queue.
+ * Uses heap data structure.
+ * @param <T> Data type
+ */
 public class Heap <T> implements PriorityQueue <T> {
-    protected int maxSize = 64;
-    protected Triplet<T, Integer, Integer>[] array = new Triplet[maxSize];
-    protected int size = 0;
+    private int maxSize = 64;
+    private Triplet<T, Integer, Integer>[] array = new Triplet[maxSize];
+    private int size = 0;
     private int counter = 0;
 
     @Override

@@ -1,11 +1,16 @@
 package ua.leirimnad;
 
+/**
+ * An array implementation of priority queue.
+ * Uses dynamic arrays.
+ * @param <T> Data type
+ */
 public class ArrayList <T> implements PriorityQueue <T> {
 
-    protected int maxSize = 64;
-    protected Pair<T, Integer>[] array = new Pair[maxSize];
+    private int maxSize = 64;
+    private Pair<T, Integer>[] array = new Pair[maxSize];
 
-    protected int size = 0;
+    private int size = 0;
 
     @Override
     public void push(T elem, int priority) {

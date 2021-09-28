@@ -1,15 +1,20 @@
 package ua.leirimnad;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * A set that stores cubes and gives information about all the possible results of throwing them.
  */
 public class CubeSet implements Comparable<CubeSet> {
+    /**
+     * An array storing the cubes in the set.
+     */
     public Cube[] cubes;
 
     /**
+     * Constructs a set with a given array of cubes.
      * @param cubes An array of cubes to be stored in a set
      */
     public CubeSet(Cube[] cubes){
@@ -86,5 +91,10 @@ public class CubeSet implements Comparable<CubeSet> {
     @Override
     public int compareTo(CubeSet o) {
         return Float.compare(this.expectedResult(), o.expectedResult());
+    }
+
+    @Override
+    public String toString() {
+        return "CubeSet{\n\tcubes: " + Arrays.toString(cubes) + "\n}";
     }
 }

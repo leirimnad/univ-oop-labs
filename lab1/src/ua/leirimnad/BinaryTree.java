@@ -1,6 +1,19 @@
 package ua.leirimnad;
 
 class BinaryTree <T> implements PriorityQueue <T> {
+
+    private static class PriorityBinaryTreeNode<T> extends Node <T> {
+        public int priority;
+        public PriorityBinaryTreeNode<T> left, right;
+
+        public PriorityBinaryTreeNode(T elem, int priority) {
+            super(elem);
+            this.priority = priority;
+            this.left = this.right = null;
+        }
+    }
+
+
     private PriorityBinaryTreeNode<T> head;
 
     @Override

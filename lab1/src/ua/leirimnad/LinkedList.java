@@ -1,6 +1,17 @@
 package ua.leirimnad;
 
 class LinkedList <T> implements PriorityQueue <T> {
+
+    private static class PriorityNode<T> extends Node <T> {
+        public int priority;
+        public PriorityNode<T> next;
+
+        public PriorityNode(T elem, int priority) {
+            super(elem);
+            this.priority = priority;
+        }
+    }
+
     private PriorityNode<T> head;
     private PriorityNode<T> gear;
 

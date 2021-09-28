@@ -1,5 +1,10 @@
 package ua.leirimnad;
 
+/**
+ * Data type similar to a regular queue or stack data structure in which each element additionally has a "priority" associated with it.
+ * In a priority queue, an element with high priority is served before an element with low priority.
+ * @param <T> Data type of element in the queue
+ */
 public interface PriorityQueue <T> {
     /**
      * Pushes an element into the queue, on the place that matches the priority.
