@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.SegmentedButton?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="356.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ua.leirimnad.lab2.AddTimerController">
+   <children>
+      <Label layoutX="35.0" layoutY="27.0" text="Створити">
+         <font>
+            <Font name="Segoe UI" size="18.0" />
+         </font>
+      </Label>
+      <SegmentedButton fx:id="segmentedButtonField" layoutX="128.0" layoutY="27.0" prefHeight="23.0" prefWidth="202.0" />
+      <AnchorPane fx:id="timerPane" layoutX="69.0" layoutY="99.0" prefHeight="222.0" prefWidth="220.0">
+         <children>
+            <VBox layoutX="1.0" prefHeight="173.0" prefWidth="186.0">
+               <children>
+                  <AnchorPane prefHeight="56.0" prefWidth="200.0">
+                     <children>
+                        <TextField fx:id="hourInput" alignment="CENTER_RIGHT" layoutY="6.0" prefHeight="46.0" prefWidth="64.0" promptText="0" style="-fx-background-color: none;" text="0">
+                           <font>
+                              <Font name="Segoe UI Bold" size="40.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+                           </padding>
+                        </TextField>
+                        <Label layoutX="78.0" layoutY="9.0" prefHeight="35.0" prefWidth="108.0" text="годин">
+                           <font>
+                              <Font name="Segoe UI" size="33.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="56.0" prefWidth="200.0">
+                     <children>
+                        <TextField fx:id="minuteInput" alignment="CENTER_RIGHT" layoutY="6.0" prefHeight="46.0" prefWidth="64.0" promptText="0" style="-fx-background-color: none;" text="10">
+                           <font>
+                              <Font name="Segoe UI Bold" size="40.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+                           </padding>
+                        </TextField>
+                        <Label layoutX="78.0" layoutY="9.0" prefHeight="35.0" prefWidth="108.0" text="хвилин">
+                           <font>
+                              <Font name="Segoe UI" size="33.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="56.0" prefWidth="200.0">
+                     <children>
+                        <TextField fx:id="secondInput" alignment="CENTER_RIGHT" layoutY="6.0" prefHeight="46.0" prefWidth="64.0" promptText="0" style="-fx-background-color: none;" text="0">
+                           <font>
+                              <Font name="Segoe UI Bold" size="40.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+                           </padding>
+                        </TextField>
+                        <Label layoutX="78.0" layoutY="9.0" prefHeight="35.0" prefWidth="108.0" text="секунд">
+                           <font>
+                              <Font name="Segoe UI" size="33.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </VBox>
+            <HBox layoutX="4.0" layoutY="203.0" spacing="4.0">
+               <children>
+                  <Label text="таймер спрацює в">
+                     <font>
+                        <Font name="Segoe UI Italic" size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="expectedEndTime" text="12:20:01">
+                     <font>
+                        <Font name="Segoe UI Bold Italic" size="16.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="alarmPane" layoutX="14.0" layoutY="100.0" prefHeight="200.0" prefWidth="324.0" visible="false">
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="324.0">
+               <children>
+                  <TextField fx:id="alarmHourInput" alignment="CENTER_RIGHT" prefHeight="97.0" prefWidth="100.0" promptText="00" style="-fx-background-color: none;" text="10">
+                     <font>
+                        <Font name="Segoe UI Bold" size="81.0" />
+                     </font>
+                     <padding>
+                        <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+                     </padding>
+                  </TextField>
+                  <Label alignment="CENTER" prefHeight="21.0" prefWidth="13.0" text=":" textFill="#757575">
+                     <font>
+                        <Font name="Segoe UI Bold" size="75.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="alarmMinuteInput" prefHeight="97.0" prefWidth="100.0" promptText="00" style="-fx-background-color: none;" text="29">
+                     <font>
+                        <Font name="Segoe UI Bold" size="81.0" />
+                     </font>
+                     <padding>
+                        <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+                     </padding>
+                  </TextField>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" layoutY="100.0" prefHeight="24.0" prefWidth="324.0" spacing="4.0">
+               <children>
+                  <Label text="через">
+                     <font>
+                        <Font name="Segoe UI Italic" size="20.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="expectedDuration" text="20 хв">
+                     <font>
+                        <Font name="Segoe UI Bold Italic" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <Label fx:id="timezoneLabel" alignment="CENTER" layoutX="47.0" layoutY="161.0" prefHeight="39.0" prefWidth="230.0" style="-fx-underline: true;" text="Локальний час" textFill="#a4a4a4">
+               <font>
+                  <Font name="Segoe UI" size="20.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <Button layoutX="123.0" layoutY="335.0" mnemonicParsing="false" text="Запустити" textFill="#167505">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

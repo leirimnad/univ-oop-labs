@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.WorldMapView?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="893.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ua.leirimnad.lab2.SelectTimezoneController">
+   <children>
+      <WorldMapView disable="true" prefHeight="580.0" prefWidth="893.0" />
+      <Slider fx:id="zoneSlider" blockIncrement="1.0" layoutX="5.0" layoutY="523.0" majorTickUnit="1.0" max="12.0" min="-11.0" minorTickCount="0" prefHeight="43.0" prefWidth="880.0" showTickMarks="true" snapToTicks="true" value="2.0" />
+      <HBox alignment="CENTER" layoutX="-2.0" layoutY="504.0" prefHeight="29.0" prefWidth="893.0" spacing="8.0">
+         <children>
+            <Label fx:id="timezoneId" alignment="CENTER" style="-fx-background-color: #77FB; -fx-background-radius: 5;" text="UTC+2" textAlignment="JUSTIFY">
+               <font>
+                  <Font name="Courier New" size="16.0" />
+               </font>
+               <padding>
+                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+               </padding>
+            </Label>
+            <Label fx:id="timezoneName" alignment="CENTER" style="-fx-background-color: #6664; -fx-background-radius: 5;" text="Kyiv, Minsk, Vienna, Bratislava" textAlignment="JUSTIFY">
+               <font>
+                  <Font name="Courier New" size="16.0" />
+               </font>
+               <padding>
+                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+               </padding>
+            </Label>
+            <Button id="submitButton" fx:id="submitButton" mnemonicParsing="false" stylesheets="@styles.css" text="✓">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

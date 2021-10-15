@@ -4,8 +4,13 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -24,12 +29,22 @@ public class TimerController {
     private Button sortButton;
 
     @FXML
+    private HBox firstTimerRow;
+
+    @FXML
     void initialize() {
-        assert addButton != null : "fx:id=\"addButton\" was not injected: check your FXML file 'timer-view.fxml'.";
-        assert sortButton != null : "fx:id=\"sortButton\" was not injected: check your FXML file 'timer-view.fxml'.";
 
         addButton.setOnMouseClicked(event -> {
-            a = new Timer(100);
+            try{
+                Parent addTimerRoot = new FXMLLoader(TimerApplication.class.getResource("addTimer-view.fxml")).load();
+                Stage addTimerStage = new Stage();
+                addTimerStage.setTitle("Створити таймер");
+                addTimerStage.setScene(new Scene(addTimerRoot));
+                addTimerStage.setResizable(false);
+                addTimerStage.show();
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
         });
         sortButton.setOnMouseClicked(event -> {
             System.out.println(a.getTimeLeft());

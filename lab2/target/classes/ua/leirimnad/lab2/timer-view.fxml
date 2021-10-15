@@ -73,9 +73,9 @@
          <content>
             <VBox>
                <children>
-                  <HBox prefHeight="134.0" prefWidth="776.0" spacing="10.0" style="-fx-padding: 5;">
+                  <HBox fx:id="firstTimerRow" prefHeight="134.0" prefWidth="776.0" spacing="10.0" style="-fx-padding: 5;">
                      <children>
-                        <AnchorPane prefWidth="250.0" styleClass="timerPane">
+                        <AnchorPane minWidth="250.0" prefWidth="250.0" styleClass="timerPane">
                            <children>
                               <VBox alignment="CENTER" layoutX="14.0" prefHeight="125.0" prefWidth="140.0">
                                  <children>
@@ -84,8 +84,11 @@
                                           <Font name="Segoe UI Bold" size="52.0" />
                                        </font>
                                        <VBox.margin>
-                                          <Insets bottom="-7.0" />
+                                          <Insets />
                                        </VBox.margin>
+                                       <padding>
+                                          <Insets bottom="-7.0" />
+                                       </padding>
                                     </Label>
                                     <Label alignment="CENTER" prefHeight="15.0" prefWidth="130.0" text="через 20 хв" textFill="#6f6f6f">
                                        <font>
@@ -94,7 +97,7 @@
                                     </Label>
                                  </children>
                               </VBox>
-                              <ToggleSwitch alignment="CENTER" contentDisplay="CENTER" layoutX="167.0" layoutY="45.0" prefHeight="27.0" prefWidth="51.0">
+                              <ToggleSwitch alignment="TOP_LEFT" contentDisplay="CENTER" layoutX="167.0" layoutY="45.0" prefHeight="25.0" prefWidth="50.0">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
