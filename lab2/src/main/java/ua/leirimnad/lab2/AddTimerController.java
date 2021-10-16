@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import javafx.animation.KeyFrame;
@@ -15,11 +16,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
 import org.controlsfx.control.SegmentedButton;
@@ -28,7 +31,8 @@ import org.controlsfx.control.SegmentedButton;
 public class AddTimerController {
     private InputTime inputTimer;
     private InputTime inputAlarm;
-    private TimeZone alarmTimeZone;
+    private TimeZone alarmTimeZone = null;
+    private InputTime selectedInput;
 
     @FXML
     private TextField alarmHourInput;
@@ -64,30 +68,41 @@ public class AddTimerController {
     private Label timezoneLabel;
 
     @FXML
+    private Button startButton, addButton;
+
+    @FXML
     void initialize() {
         alarmTimeZone = TimeZone.getTimeZone(ZoneId.systemDefault());
         this.inputTimer = new InputTime(hourInput, minuteInput, secondInput, false);
         this.inputAlarm = new InputTime(alarmHourInput, alarmMinuteInput, null, true);
 
 
-        int setHour = LocalDateTime.now().getHour();
-        if (setHour == 23) setHour = 0;
-        else setHour++;
-        alarmHourInput.setText(Integer.toString(setHour));
-        alarmMinuteInput.setText(Integer.toString(LocalDateTime.now().getMinute()));
         SegmentableButton toggleTimer = new SegmentableButton("таймер");
-        toggleTimer.fire();
         SegmentableButton toggleAlarm = new SegmentableButton("будильник");
         segmentedButtonField.getButtons().addAll(toggleTimer, toggleAlarm);
+
         toggleTimer.setOnAction(e->{
             timerPane.setVisible(true);
             alarmPane.setVisible(false);
+            selectedInput = inputTimer;
         });
         toggleAlarm.setOnAction(e->{
+            int setHour = LocalDateTime.now().getHour();
+            if (setHour == 23) setHour = 0;
+            else setHour++;
+            alarmHourInput.setText(Integer.toString(setHour));
+            alarmMinuteInput.setText(Integer.toString(LocalDateTime.now().getMinute()));
+
             timerPane.setVisible(false);
             alarmPane.setVisible(true);
+            selectedInput = inputAlarm;
         });
 
+        addButton.setOnMouseClicked(e->this.addSetClock(false));
+        startButton.setOnMouseClicked(e->this.addSetClock(true));
+
+
+        toggleTimer.fire();
         updateEndTime();
 
         Timeline updateEndTime = new Timeline( new KeyFrame(Duration.seconds(1), event -> updateEndTime()));
@@ -107,7 +122,9 @@ public class AddTimerController {
                 selectTimezoneStage.show();
                 selectTimezoneStage.setOnCloseRequest(ev->{
                     this.alarmTimeZone = (TimeZone) selectTimezoneStage.getUserData();
+                    this.inputAlarm.setTimeZone(alarmTimeZone);
                     timezoneLabel.setText("Часова зона " + alarmTimeZone.getDisplayName(Locale.ENGLISH));
+                    updateEndTime();
                 });
             } catch (java.io.IOException er) {
                 er.printStackTrace();
@@ -117,22 +134,42 @@ public class AddTimerController {
     }
 
     private void updateEndTime(){
-        long secTimer = this.inputTimer.totalSeconds();
-        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedTime( FormatStyle.MEDIUM )
-                .withZone( ZoneId.systemDefault() );
-        Instant time = Instant.now().plusSeconds(secTimer);
-        expectedEndTime.setText(formatter.format(time));
+        if(this.inputTimer.totalSeconds() > 0)
+            expectedEndTime.setText(Timer.getEndTimeString(this.inputTimer.totalSeconds(), FormatStyle.MEDIUM));
+        else
+            expectedEndTime.setText("iнший раз");
 
-        // TODO: 15.10.2021 change secAlarm to give an amount of time to wait 
-        long secAlarm = this.inputAlarm.totalSeconds();
-        String timeLeft;
-        if(secAlarm < 60) timeLeft = secAlarm + " сек";
-        else if(secAlarm/60 < 60) timeLeft = secAlarm/60 + " хв";
-        else timeLeft = secAlarm/3600 + " год";
-        expectedDuration.setText(timeLeft);
+        expectedDuration.setText(Alarm.getEndDurationString(this.inputAlarm.secondsUntil()));
     }
 
+    private void addSetClock(boolean set){
+        Stage window = (Stage) startButton.getScene().getWindow();
+
+        SetClock newSetClock;
+        if(selectedInput == inputTimer){
+            if (inputTimer.totalSeconds() == 0) return;
+            newSetClock = new Timer(inputTimer.totalSeconds());
+        }
+        else if (selectedInput == inputAlarm) {
+            newSetClock = new Alarm(inputAlarm.h(), inputAlarm.m(), alarmTimeZone);
+        }
+        else newSetClock = null;
+
+        if(newSetClock != null) newSetClock.set(set);
+
+        window.setUserData(newSetClock);
+        window.getOnCloseRequest().handle(new WindowEvent(window, WindowEvent.WINDOW_CLOSE_REQUEST));
+        window.close();
+    }
+
+    private void addSetClock(){
+        addSetClock(true);
+    }
+
+
+
     private class InputTime {
+        private TimeZone tz = null;
         private TextField h, m, s;
         private boolean zeros;
 
@@ -149,10 +186,18 @@ public class AddTimerController {
             if(s != null) s.textProperty().addListener((observable, oldValue, newValue) -> updateEndTime());
         }
 
+        public void setTimeZone(TimeZone tz){
+            this.tz = tz;
+        }
+
         public long totalSeconds(){
             return Integer.parseInt(h.getText())* 3600L +
                     Integer.parseInt(m.getText())* 60L +
                     (s != null ? Integer.parseInt(secondInput.getText()) : 0);
+        }
+
+        public long secondsUntil(){
+            return Alarm.secondsUntil(h(), m(), tz);
         }
 
         private void addNumericInputControl(TextField textField, int max){
@@ -172,6 +217,18 @@ public class AddTimerController {
             });
         }
 
+        public int h() {
+            return Integer.parseInt(this.h.getText());
+        }
+
+        public int m() {
+            return Integer.parseInt(this.m.getText());
+        }
+
+        public int s() {
+            if(s == null) return 0;
+            return Integer.parseInt(this.s.getText());
+        }
 
 
     }

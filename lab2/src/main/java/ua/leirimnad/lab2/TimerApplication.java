@@ -25,6 +25,8 @@ public class TimerApplication extends Application {
         stage.setTitle("Таймер");
         stage.setScene(scene);
         stage.setResizable(true);
+        stage.setMinWidth(300);
+        stage.setMinHeight(285);
         stage.show();
     }
 

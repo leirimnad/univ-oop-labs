@@ -14,7 +14,7 @@
     tab-background: black;
 }
 
-.timerPane{
+.timerPane, .alarmPane{
     -fx-border-color: grey;
     -fx-border-radius: 10;
     -fx-background-color:  #EEE;

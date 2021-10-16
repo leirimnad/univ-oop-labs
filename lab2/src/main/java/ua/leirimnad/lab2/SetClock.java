@@ -1,22 +1,21 @@
 package ua.leirimnad.lab2;
 
+import javafx.scene.layout.AnchorPane;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-public class SetClock {
-    protected Instant timeSet;
-    protected Instant setTo;
+public abstract class SetClock {
+    protected Instant timeCreated;
+    protected String soundPath;
+    protected SetClockGroup group;
+    protected AnchorPane widget;
 
-    public SetClock(Instant setTo){
-        this.timeSet = Instant.now();
-        this.setTo = setTo;
+    public SetClock(){
+        this.timeCreated = Instant.now();
     }
 
-    public long getTimeLeft(){
-        return Instant.now().until(this.setTo, ChronoUnit.SECONDS);
-    }
+    public abstract AnchorPane getWidget();
+    public abstract void set(boolean to);
 
-    public boolean hasGoneOff(){
-        return Instant.now().isAfter(this.setTo);
-    }
 }

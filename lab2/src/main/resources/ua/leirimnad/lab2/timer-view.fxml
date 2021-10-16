@@ -37,6 +37,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -69,83 +70,166 @@
             </Button>
          </children>
       </HBox>
-      <ScrollPane hbarPolicy="NEVER" prefHeight="496.0" prefWidth="742.0" style="-fx-background-color: transparent;">
+      <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent;">
          <content>
-            <VBox>
+            <FlowPane fx:id="firstTimerRow" hgap="10.0" minHeight="128.0" minWidth="250.0" vgap="10.0">
                <children>
-                  <HBox fx:id="firstTimerRow" prefHeight="134.0" prefWidth="776.0" spacing="10.0" style="-fx-padding: 5;">
+                  <AnchorPane minWidth="250.0" prefWidth="250.0" styleClass="timerPane">
                      <children>
-                        <AnchorPane minWidth="250.0" prefWidth="250.0" styleClass="timerPane">
+                        <VBox alignment="CENTER" layoutX="14.0" prefHeight="125.0" prefWidth="140.0">
                            <children>
-                              <VBox alignment="CENTER" layoutX="14.0" prefHeight="125.0" prefWidth="140.0">
-                                 <children>
-                                    <Label alignment="CENTER" contentDisplay="CENTER" text="12:20">
-                                       <font>
-                                          <Font name="Segoe UI Bold" size="52.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets />
-                                       </VBox.margin>
-                                       <padding>
-                                          <Insets bottom="-7.0" />
-                                       </padding>
-                                    </Label>
-                                    <Label alignment="CENTER" prefHeight="15.0" prefWidth="130.0" text="через 20 хв" textFill="#6f6f6f">
-                                       <font>
-                                          <Font name="Segoe UI" size="16.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </VBox>
-                              <ToggleSwitch alignment="TOP_LEFT" contentDisplay="CENTER" layoutX="167.0" layoutY="45.0" prefHeight="25.0" prefWidth="50.0">
+                              <Label alignment="CENTER" contentDisplay="CENTER" text="12:20">
                                  <font>
-                                    <Font size="14.0" />
+                                    <Font name="Segoe UI Bold" size="52.0" />
                                  </font>
-                              </ToggleSwitch>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <padding>
+                                    <Insets bottom="-7.0" />
+                                 </padding>
+                              </Label>
+                              <Label alignment="CENTER" prefHeight="15.0" prefWidth="130.0" text="через 20 хв" textFill="#6f6f6f">
+                                 <font>
+                                    <Font name="Segoe UI" size="16.0" />
+                                 </font>
+                              </Label>
                            </children>
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </AnchorPane>
-                        <AnchorPane maxHeight="155.0" prefHeight="127.0" prefWidth="251.0" style="-fx-border-color: grey; -fx-border-radius: 10; -fx-background-color: #EEE;">
-                           <children>
-                              <VBox alignment="CENTER" layoutX="7.0" prefHeight="125.0" prefWidth="161.0">
-                                 <children>
-                                    <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="155.0" text="1:50:44">
-                                       <font>
-                                          <Font name="Segoe UI Italic" size="49.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets bottom="-7.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <Label alignment="CENTER" prefHeight="0.0" prefWidth="130.0" text="кiнець в 12:35" textFill="#6f6f6f">
-                                       <font>
-                                          <Font name="Segoe UI" size="16.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </VBox>
-                              <Button layoutX="186.0" layoutY="63.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="42.0" text="STOP">
-                                 <font>
-                                    <Font size="9.0" />
-                                 </font>
-                              </Button>
-                              <Button layoutX="186.0" layoutY="32.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="41.0" text="||">
-                                 <font>
-                                    <Font name="System Bold" size="9.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </AnchorPane>
+                        </VBox>
+                        <ToggleSwitch alignment="TOP_LEFT" contentDisplay="CENTER" layoutX="167.0" layoutY="45.0" prefHeight="25.0" prefWidth="50.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </ToggleSwitch>
                      </children>
-                  </HBox>
+                  </AnchorPane>
+                  <AnchorPane maxHeight="155.0" prefHeight="127.0" prefWidth="251.0" style="-fx-border-color: grey; -fx-border-radius: 10; -fx-background-color: #EEE;">
+                     <children>
+                        <VBox alignment="CENTER" layoutX="7.0" prefHeight="125.0" prefWidth="161.0">
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="155.0" text="1:50:44">
+                                 <font>
+                                    <Font name="Segoe UI Italic" size="49.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="-7.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label alignment="CENTER" prefHeight="0.0" prefWidth="130.0" text="кiнець в 12:35" textFill="#6f6f6f">
+                                 <font>
+                                    <Font name="Segoe UI" size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <Button layoutX="186.0" layoutY="63.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="42.0" text="STOP">
+                           <font>
+                              <Font size="9.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="186.0" layoutY="32.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="41.0" text="||">
+                           <font>
+                              <Font name="System Bold" size="9.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane maxHeight="155.0" prefHeight="127.0" prefWidth="251.0" style="-fx-border-color: grey; -fx-border-radius: 10; -fx-background-color: #EEE;">
+                     <children>
+                        <VBox alignment="CENTER" layoutX="7.0" prefHeight="125.0" prefWidth="161.0">
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="155.0" text="1:50:44">
+                                 <font>
+                                    <Font name="Segoe UI Italic" size="49.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="-7.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label alignment="CENTER" prefHeight="0.0" prefWidth="130.0" text="кiнець в 12:35" textFill="#6f6f6f">
+                                 <font>
+                                    <Font name="Segoe UI" size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <Button layoutX="186.0" layoutY="63.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="42.0" text="STOP">
+                           <font>
+                              <Font size="9.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="186.0" layoutY="32.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="41.0" text="||">
+                           <font>
+                              <Font name="System Bold" size="9.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane maxHeight="155.0" prefHeight="127.0" prefWidth="251.0" style="-fx-border-color: grey; -fx-border-radius: 10; -fx-background-color: #EEE;">
+                     <children>
+                        <VBox alignment="CENTER" layoutX="7.0" prefHeight="125.0" prefWidth="161.0">
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="155.0" text="1:50:44">
+                                 <font>
+                                    <Font name="Segoe UI Italic" size="49.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="-7.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label alignment="CENTER" prefHeight="0.0" prefWidth="130.0" text="кiнець в 12:35" textFill="#6f6f6f">
+                                 <font>
+                                    <Font name="Segoe UI" size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <Button layoutX="186.0" layoutY="63.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="42.0" text="STOP">
+                           <font>
+                              <Font size="9.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="186.0" layoutY="32.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="41.0" text="||">
+                           <font>
+                              <Font name="System Bold" size="9.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane maxHeight="155.0" prefHeight="127.0" prefWidth="251.0" style="-fx-border-color: grey; -fx-border-radius: 10; -fx-background-color: #EEE;">
+                     <children>
+                        <VBox alignment="CENTER" layoutX="7.0" prefHeight="125.0" prefWidth="161.0">
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="155.0" text="1:50:44">
+                                 <font>
+                                    <Font name="Segoe UI Italic" size="49.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="-7.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label alignment="CENTER" prefHeight="0.0" prefWidth="130.0" text="кiнець в 12:35" textFill="#6f6f6f">
+                                 <font>
+                                    <Font name="Segoe UI" size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <Button layoutX="186.0" layoutY="63.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="42.0" text="STOP">
+                           <font>
+                              <Font size="9.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="186.0" layoutY="32.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="41.0" text="||">
+                           <font>
+                              <Font name="System Bold" size="9.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </AnchorPane>
                </children>
-            </VBox>
+            </FlowPane>
          </content>
-         <VBox.margin>
-            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-         </VBox.margin>
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>

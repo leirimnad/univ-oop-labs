@@ -18,7 +18,7 @@
          </font>
       </Label>
       <SegmentedButton fx:id="segmentedButtonField" layoutX="128.0" layoutY="27.0" prefHeight="23.0" prefWidth="202.0" />
-      <AnchorPane fx:id="timerPane" layoutX="69.0" layoutY="99.0" prefHeight="222.0" prefWidth="220.0">
+      <AnchorPane fx:id="timerPane" layoutX="69.0" layoutY="70.0" prefHeight="266.0" prefWidth="220.0">
          <children>
             <VBox layoutX="1.0" prefHeight="173.0" prefWidth="186.0">
                <children>
@@ -84,7 +84,7 @@
                   </AnchorPane>
                </children>
             </VBox>
-            <HBox layoutX="4.0" layoutY="203.0" spacing="4.0">
+            <HBox layoutX="7.0" layoutY="216.0" spacing="4.0">
                <children>
                   <Label text="таймер спрацює в">
                      <font>
@@ -98,6 +98,7 @@
                   </Label>
                </children>
             </HBox>
+            <Button fx:id="addButton" layoutX="54.0" layoutY="241.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="106.0" text="Додати" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="alarmPane" layoutX="14.0" layoutY="100.0" prefHeight="200.0" prefWidth="324.0" visible="false">
@@ -148,7 +149,7 @@
             </Label>
          </children>
       </AnchorPane>
-      <Button layoutX="123.0" layoutY="335.0" mnemonicParsing="false" text="Запустити" textFill="#167505">
+      <Button fx:id="startButton" layoutX="123.0" layoutY="335.0" mnemonicParsing="false" text="Запустити" textFill="#167505">
          <font>
             <Font size="18.0" />
          </font>
