@@ -50,7 +50,7 @@ public class SelectTimezoneController {
 
     private void setTimezoneNames(){
         int hourOffset = (int) Math.round(zoneSlider.getValue());
-        System.out.println(hourOffset);
+
 
         List<String> names = new ArrayList<>(List.of(TimeZone.getAvailableIDs(hourOffset * 3600000)));
         List<String> filteredNames = new ArrayList<>();

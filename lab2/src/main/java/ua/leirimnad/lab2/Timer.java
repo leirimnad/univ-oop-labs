@@ -2,48 +2,42 @@ package ua.leirimnad.lab2;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
-import org.controlsfx.control.ToggleSwitch;
+
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.time.temporal.ChronoUnit;
 
 
-public class Timer extends SetClock{
-    private boolean set, paused;
+public class Timer extends SetClock {
+    private boolean paused;
     private long totalDuration;
     private long currentDuration;
     private Instant timeSet;
-    private Label durationLabel, restLabel;
+    private Label restLabel;
     private Timeline timeline;
     private Button playButton, stopButton, pauseButton;
     private VBox timeBox;
 
 
-    public Timer(int hours, int minutes, int seconds){
-        this(hours * 3600L + minutes * 60L + seconds);
+    public Timer(int hours, int minutes, int seconds, SetClockGroup group){
+        this(hours * 3600L + minutes * 60L + seconds, group);
     }
 
-    public Timer(long seconds) {
-        super();
+    public Timer(long seconds, SetClockGroup group) {
+        super(group);
         totalDuration = currentDuration = seconds;
-        this.widget = createWidget();
         set(false);
+        updateWidget();
     }
 
     public void set(){
@@ -52,11 +46,12 @@ public class Timer extends SetClock{
 
     @Override
     public void set(boolean to) {
+        if(set == to) return;
         set = to;
         paused = false;
 
         if(to) {
-            pauseButton.setDisable(false);
+            if(pauseButton != null) pauseButton.setDisable(false);
             timeSet = Instant.now();
             currentDuration = totalDuration;
             timeBox.getChildren().add(restLabel);
@@ -65,7 +60,8 @@ public class Timer extends SetClock{
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
         } else {
-            durationLabel.setTextFill(Color.BLACK);
+            if(wentOff) turnOff();
+            if(timeLabel != null) timeLabel.setTextFill(Color.BLACK);
             timeSet = null;
             currentDuration = totalDuration;
             timeBox.getChildren().remove(restLabel);
@@ -76,7 +72,7 @@ public class Timer extends SetClock{
         if(playButton != null) playButton.setVisible(!to);
         if(pauseButton != null) pauseButton.setVisible(to);
         if(stopButton != null) stopButton.setVisible(to);
-        restLabel.setVisible(to);
+        if(restLabel != null) restLabel.setVisible(to);
         updateWidget();
     }
 
@@ -96,12 +92,18 @@ public class Timer extends SetClock{
         updateWidget();
     }
 
+    @Override
     public long getTimeLeft(){
-        return currentDuration;
+        return currentDuration*1000;
     }
 
-    public boolean hasGoneOff(){
-        return currentDuration <= 0;
+    @Override
+    public long getTotalDuration() {
+        return totalDuration*1000;
+    }
+
+    public boolean wentOff(){
+        return wentOff;
     }
 
     public static String getEndTimeString(long sec, FormatStyle formatStyle){
@@ -128,16 +130,16 @@ public class Timer extends SetClock{
     private void secondTick(){
         if(currentDuration > 0) currentDuration -= 1;
 
-        if (currentDuration == 0){
-            durationLabel.setTextFill(Color.RED);
+        if (!wentOff && currentDuration == 0){
             pauseButton.setDisable(true);
+            goOff();
         }
 
         updateWidget();
     }
 
-    private void updateWidget(){
-        durationLabel.setText(getDurationString(currentDuration));
+    protected void updateWidget(){
+        timeLabel.setText(getDurationString(currentDuration));
         if(!paused)
             restLabel.setText("кiнець в "+Timer.getEndTimeString(currentDuration, FormatStyle.SHORT));
         else
@@ -148,14 +150,11 @@ public class Timer extends SetClock{
     }
 
     @Override
-    public AnchorPane getWidget() {
-        return widget;
-    }
-
-    private AnchorPane createWidget(){
-        AnchorPane anchorPane = new AnchorPane();
-        anchorPane.getStyleClass().add("alarmPane");
-        anchorPane.setMinWidth(250);
+    protected void createWidget(){
+        if(widget != null) return;
+        widget = new AnchorPane();
+        widget.getStyleClass().add("alarmPane");
+        widget.setMinWidth(250);
 
         timeBox = new VBox();
         timeBox.setAlignment(Pos.CENTER);
@@ -164,14 +163,14 @@ public class Timer extends SetClock{
         timeBox.setPrefWidth(140);
         timeBox.setPrefHeight(125);
         timeBox.setFillWidth(true);
-        anchorPane.getChildren().add(timeBox);
+        widget.getChildren().add(timeBox);
 
         pauseButton = new Button("⏸");
         pauseButton.setPrefSize(40, 30);
         pauseButton.setLayoutX(186);
         pauseButton.setLayoutY(32);
         pauseButton.setOnMouseClicked(e->pause(!paused));
-        anchorPane.getChildren().add(pauseButton);
+        widget.getChildren().add(pauseButton);
 
         stopButton = new Button("⏹");
         stopButton.setFont(Font.font("System", 9));
@@ -181,7 +180,7 @@ public class Timer extends SetClock{
         stopButton.setOnMouseClicked(e->{
             if(set) set(false);
         });
-        anchorPane.getChildren().add(stopButton);
+        widget.getChildren().add(stopButton);
 
         playButton = new Button("⏵");
         playButton.setPadding(new Insets(-1, -1, -1, -1));
@@ -192,16 +191,16 @@ public class Timer extends SetClock{
         playButton.setOnMouseClicked(e->{
             if(!set) set(true);
         });
-        anchorPane.getChildren().add(playButton);
+        widget.getChildren().add(playButton);
 
-        durationLabel = new Label();
-        durationLabel.setAlignment(Pos.CENTER);
-        timeBox.getChildren().add(durationLabel);
-        durationLabel.textProperty().addListener((observable, oldValue, newValue)->{
-            if (durationLabel.getText().length() > 5) {
-                durationLabel.setStyle("-fx-font: italic 35 'Segoe UI';");
+        timeLabel = new Label();
+        timeLabel.setAlignment(Pos.CENTER);
+        timeBox.getChildren().add(timeLabel);
+        timeLabel.textProperty().addListener((observable, oldValue, newValue)->{
+            if (timeLabel.getText().length() > 5) {
+                timeLabel.setStyle("-fx-font: italic 35 'Segoe UI';");
             } else {
-                durationLabel.setStyle("-fx-font: italic 49 'Segoe UI';");
+                timeLabel.setStyle("-fx-font: italic 49 'Segoe UI';");
             }
         });
 
@@ -211,7 +210,7 @@ public class Timer extends SetClock{
         restLabel.setAlignment(Pos.CENTER);
         restLabel.setPrefSize(130, 15);
         restLabel.setPadding(new Insets(-7, 0, 0, 0));
-
-        return anchorPane;
     }
+
+
 }

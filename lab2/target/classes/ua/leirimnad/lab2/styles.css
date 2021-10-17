@@ -17,7 +17,9 @@
 .timerPane, .alarmPane{
     -fx-border-color: grey;
     -fx-border-radius: 10;
+    -fx-background-radius: 10;
     -fx-background-color:  #EEE;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0, 0.3), 8, 0, 0, 0);
 }
 
 .toggle-switch {
@@ -47,4 +49,57 @@
 
 .button {
     -fx-focus-traversable: false;
+}
+
+.groupBox {
+    -fx-padding: 10, 10, 10, 10;
+    -fx-spacing: 10;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-background-color: rgba(205, 228, 255, 0.86);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0, 0.5), 10, 0, 0, 0);
+}
+
+#initialGroupBox{
+    -fx-effect: null;
+    -fx-background-color: transparent;
+    -fx-padding: 0, 0, 0, 0;
+}
+
+.groupControlsBox {
+    -fx-alignment: center-left;
+    -fx-spacing: 15;
+    /*-fx-pref-height: USE_COMPUTED_SIZE;*/
+}
+
+.groupNameLabel{
+    -fx-font: bold 15 'Sege UI';
+    -fx-padding: 0, 0, 0, 5;
+}
+
+.groupControlsButton{
+
+}
+
+.groupStopButton{
+
+}
+
+.groupStartButton{
+
+}
+
+.clockFlowPane {
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+    -fx-min-width: 250;
+    -fx-min-height: 120;
+}
+
+.wentOffLabel{
+    -fx-text-fill: red;
+}
+
+.wentOffWidget{
+    -fx-background-color: #efbdbd;
 }

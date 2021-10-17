@@ -9,6 +9,8 @@ module ua.leirimnad.lab2 {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires javafx.media;
+    requires java.desktop;
 
     opens ua.leirimnad.lab2 to javafx.fxml;
     exports ua.leirimnad.lab2;

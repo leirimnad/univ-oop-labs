@@ -15,6 +15,7 @@ import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 import org.controlsfx.control.ToggleSwitch;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -25,48 +26,48 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 
-public class Alarm extends SetClock{
+public class Alarm extends SetClock implements Serializable {
     private TimeZone timeZone;
     private int h, m;
     private Instant setTo;
-    private boolean set, wentOff;
-    private Label timeLabel, restLabel;
+    private Instant setAt;
+    private Label restLabel, timezoneLabel;
     private ToggleSwitch toggleSwitch;
+    private VBox timeBox;
 
-    public Alarm(int h, int m) {
-        this(h, m, null);
+    public Alarm(int h, int m, SetClockGroup group) {
+        this(h, m, group, null);
     }
 
-    public Alarm(int h, int m, TimeZone tz) {
-        super();
+    public Alarm(int h, int m, SetClockGroup group, TimeZone tz) {
+        super(group);
         this.h = h;
         this.m = m;
         this.timeZone = tz;
-        widget = createWidget();
         set(false);
+        updateWidget();
     }
 
     @Override
     public void set(boolean to){
+        if(set == to) return;
         set = to;
-        wentOff = false;
 
         if(to){
             setTo = nextInstant(h, m, timeZone);
+            setAt = Instant.now();
+        } else {
+            if(wentOff) turnOff();
+            setAt = null;
         }
 
-        toggleSwitch.setSelected(to);
-        timeLabel.setTextFill(Color.BLACK);
+        if(toggleSwitch != null) toggleSwitch.setSelected(to);
+        if(timeLabel != null) timeLabel.setTextFill(Color.BLACK);
         updateWidget();
     }
 
     public void set(){
         set(true);
-    }
-
-    private void goOff(){
-        wentOff = true;
-        timeLabel.setTextFill(Color.RED);
     }
 
     private long secondsUntilGoingOff(){
@@ -99,19 +100,25 @@ public class Alarm extends SetClock{
     }
 
     public void tick(){
-        if (set && Instant.now().isAfter(setTo)){
+        if (set && Instant.now().isAfter(setTo) && !wentOff){
             goOff();
         }
 
         updateWidget();
     }
 
-    public void updateWidget(){
-        if (!wentOff)
-            restLabel.setText("через "+getEndDurationString(secondsUntilGoingOff()));
-        if (wentOff)
-            restLabel.setText("зараз");
-
+    protected void updateWidget(){
+        timeLabel.setText(getTimeString(h, m));
+        if(timeZone != null && !timeZone.equals(TimeZone.getTimeZone(ZoneId.systemDefault()))) {
+            timezoneLabel.setText(timeZone.getDisplayName(Locale.ENGLISH));
+            timezoneLabel.setVisible(true);
+        } else timeBox.getChildren().remove(timezoneLabel);
+        if(restLabel != null) {
+            if (!wentOff)
+                restLabel.setText("через " + getEndDurationString(secondsUntilGoingOff()));
+            if (wentOff)
+                restLabel.setText("зараз");
+        }
     }
 
     static public String getTimeString(int h, int m){
@@ -126,22 +133,20 @@ public class Alarm extends SetClock{
         return timeLeft;
     }
 
-    public AnchorPane getWidget(){
-        return widget;
-    }
+    @Override
+    protected void createWidget(){
+        if(widget != null) return;
+        widget = new AnchorPane();
+        widget.getStyleClass().add("timerPane");
+        widget.setMinWidth(250);
 
-    public AnchorPane createWidget(){
-        AnchorPane anchorPane = new AnchorPane();
-        anchorPane.getStyleClass().add("timerPane");
-        anchorPane.setMinWidth(250);
-
-        VBox vBox = new VBox();
-        vBox.setAlignment(Pos.CENTER);
-        vBox.setLayoutX(15);
-        vBox.setLayoutY(0);
-        vBox.setPrefWidth(140);
-        vBox.setPrefHeight(125);
-        anchorPane.getChildren().add(vBox);
+        timeBox = new VBox();
+        timeBox.setAlignment(Pos.CENTER);
+        timeBox.setLayoutX(15);
+        timeBox.setLayoutY(0);
+        timeBox.setPrefWidth(140);
+        timeBox.setPrefHeight(125);
+        widget.getChildren().add(timeBox);
 
         toggleSwitch = new ToggleSwitch();
         toggleSwitch.setPrefSize(50, 25);
@@ -150,25 +155,28 @@ public class Alarm extends SetClock{
         toggleSwitch.setOnMouseClicked(e->{
             set(!set);
         });
-        anchorPane.getChildren().add(toggleSwitch);
+        widget.getChildren().add(toggleSwitch);
+
+        timezoneLabel = new Label();
+        timezoneLabel.setFont(Font.font("Segoe UI", 16));
+        timezoneLabel.setTextFill(Color.web("#6f6f6f"));
+        timezoneLabel.setAlignment(Pos.CENTER);
+        timezoneLabel.setPrefSize(140, 15);
+        timezoneLabel.setVisible(false);
+        timeBox.setLayoutX(15);
+        timeBox.setLayoutY(0);
+        widget.getChildren().add(timezoneLabel);
 
         if(timeZone != null && !timeZone.equals(TimeZone.getTimeZone(ZoneId.systemDefault()))){
-            Label timezoneLabel = new Label();
             timezoneLabel.setText(timeZone.getDisplayName(Locale.ENGLISH));
-            timezoneLabel.setFont(Font.font("Segoe UI", 16));
-            timezoneLabel.setTextFill(Color.web("#6f6f6f"));
-            timezoneLabel.setAlignment(Pos.CENTER);
-            timezoneLabel.setPadding(new Insets(0, 0, -7, 0));
-            timezoneLabel.setPrefSize(130, 15);
-            vBox.getChildren().add(timezoneLabel);
+            timezoneLabel.setVisible(true);
         }
 
         timeLabel = new Label();
         timeLabel.setText(getTimeString(h, m));
         timeLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 52));
         timeLabel.setAlignment(Pos.CENTER);
-
-        vBox.getChildren().add(timeLabel);
+        timeBox.getChildren().add(timeLabel);
 
         restLabel = new Label();
         restLabel.setFont(Font.font("Segoe UI", 16));
@@ -176,8 +184,29 @@ public class Alarm extends SetClock{
         restLabel.setAlignment(Pos.CENTER);
         restLabel.setPrefSize(130, 15);
         restLabel.setPadding(new Insets(-7, 0, 0, 0));
-        vBox.getChildren().add(restLabel);
+        timeBox.getChildren().add(restLabel);
 
-        return anchorPane;
+    }
+
+    @Override
+    public long getTotalDuration() {
+        if(!set) return -1;
+        return setAt.until(setTo, ChronoUnit.MILLIS);
+    }
+
+    @Override
+    public long getTimeLeft() {
+        if(!set) return -1;
+        return Instant.now().until(setTo, ChronoUnit.MILLIS);
+    }
+
+    @Override
+    public String toString() {
+        return "Alarm{" +
+                "h=" + h +
+                ", m=" + m +
+                ", set=" + set +
+                ", wentOff=" + wentOff +
+                '}';
     }
 }

@@ -11,19 +11,20 @@ import java.util.*;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import org.controlsfx.control.SegmentedButton;
 
@@ -33,6 +34,9 @@ public class AddTimerController {
     private InputTime inputAlarm;
     private TimeZone alarmTimeZone = null;
     private InputTime selectedInput;
+    private List<SetClockGroup> availableGroups;
+    private SetClockGroup selectedGroup;
+    private SetClockGroup initialGroup;
 
     @FXML
     private TextField alarmHourInput;
@@ -69,6 +73,12 @@ public class AddTimerController {
 
     @FXML
     private Button startButton, addButton;
+
+    @FXML
+    private ComboBox<SetClockGroup> groupChooseBox;
+
+    @FXML
+    private AnchorPane rootPane;
 
     @FXML
     void initialize() {
@@ -146,12 +156,19 @@ public class AddTimerController {
         Stage window = (Stage) startButton.getScene().getWindow();
 
         SetClock newSetClock;
+
+        selectedGroup = groupChooseBox.getConverter().fromString(groupChooseBox.getEditor().getText());
+        if (selectedGroup == null) {
+            System.out.println("For some reason not a single group was selected");
+            selectedGroup = availableGroups.get(0);
+        }
+
         if(selectedInput == inputTimer){
             if (inputTimer.totalSeconds() == 0) return;
-            newSetClock = new Timer(inputTimer.totalSeconds());
+            newSetClock = new Timer(inputTimer.totalSeconds(), selectedGroup);
         }
         else if (selectedInput == inputAlarm) {
-            newSetClock = new Alarm(inputAlarm.h(), inputAlarm.m(), alarmTimeZone);
+            newSetClock = new Alarm(inputAlarm.h(), inputAlarm.m(), selectedGroup, alarmTimeZone);
         }
         else newSetClock = null;
 
@@ -249,6 +266,29 @@ public class AddTimerController {
         public SegmentableButton(String text) {
             super(text);
         }
+    }
+    public void initData(List<SetClockGroup> groups, SetClockGroup initialGroup){
+        availableGroups = groups;
+        this.initialGroup = selectedGroup = initialGroup;
+        groupChooseBox.setItems(FXCollections.observableArrayList(availableGroups));
+        groupChooseBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(SetClockGroup object) {
+                if(object == null) return "";
+                return object.toString();
+            }
+
+            @Override
+            public SetClockGroup fromString(String string) {
+                string = string.trim();
+                if (string.isEmpty())
+                    return initialGroup;
+                String finalString = string;
+                return groupChooseBox.getItems().stream().filter(gr ->
+                        gr.toString().equals(finalString)).findFirst().orElse(new SetClockGroup(string));
+            }
+        });
+
     }
 }
 
