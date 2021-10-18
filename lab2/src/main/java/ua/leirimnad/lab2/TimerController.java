@@ -20,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.DragEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -63,7 +64,7 @@ public class TimerController {
                 alarm.tick();
             }
 
-            // sortClocks();
+            //sortClocks();
             updateNearestClock();
             float progress;
             if(nearestClock == null) progress = -1;
@@ -117,37 +118,20 @@ public class TimerController {
                 addTimerStage.setOnCloseRequest(e->{
                     if(addTimerStage.getUserData() != null){
                         SetClock newSetClock = (SetClock) addTimerStage.getUserData();
-                        newSetClock.setOnDelete(ev-> {
-                            updateGroups();
-                            updateNearestClock();
-                        });
                         newSetClock.setOnTick(ev->sortClocks());
-                        newSetClock.setOnDelete(ev->sortClocks());
-                        newSetClock.setOnUnset(ev->sortClocks());
+                        newSetClock.setOnDelete(ev-> {
+                            updateNearestClock();
+                            sortClocks();
+                        });
+                        // !!
+                        newSetClock.setOnGoingOff(ev->sortClocks());
                         if (addTimerStage.getUserData().getClass().equals(Alarm.class)){
                             alarms.add((Alarm) addTimerStage.getUserData());
                         }
-                        if(!groups.contains(newSetClock.getGroup())){
+                        if(!groups.contains(newSetClock.getGroup()))
                             addGroup(newSetClock.getGroup());
-                        }
-                        newSetClock.setOnDrag(dragEvent->{
-                            setClockSortingComparator(customOrderComparator);
-                            System.out.println(dragEvent.getGestureSource().getClass().getName());
-                            AnchorPane sourceWidget = (AnchorPane) dragEvent.getGestureSource();
 
-                            System.out.println("Type is "+dragEvent.getGestureTarget().getClass().getName());
-                            AnchorPane targetWidget = (AnchorPane) dragEvent.getGestureTarget();
-
-                            SetClock sourceClock = getSetClockFromWidget(sourceWidget);
-                            SetClock targetClock = getSetClockFromWidget(targetWidget);
-                            assert sourceClock != null;
-                            assert targetClock != null;
-                            if(!sourceClock.getGroup().equals(targetClock.getGroup())) return;
-                            targetClock.getGroup().replaceClock(
-                                    sourceClock, targetClock.getGroup().indexOf(targetClock));
-                            System.out.println("DRAG "+sourceClock+"\nON "+targetClock);
-                            sortClocks();
-                        });
+                        newSetClock.setOnDrag(this::handleDrag);
 
                         updateGroups();
                         updateNearestClock();
@@ -164,6 +148,7 @@ public class TimerController {
 
     private void addGroup(SetClockGroup group){
         groups.add(group);
+        group.setOnClockListChange(e->updateGroups());
         updateGroups();
         updateNearestClock();
     }
@@ -297,6 +282,24 @@ public class TimerController {
         return null;
     }
 
+    private void handleDrag(DragEvent dragEvent){
+        setClockSortingComparator(customOrderComparator);
 
+        AnchorPane sourceWidget = (AnchorPane) dragEvent.getGestureSource();
+        AnchorPane targetWidget = (AnchorPane) dragEvent.getGestureTarget();
+
+        SetClock sourceClock = getSetClockFromWidget(sourceWidget);
+        SetClock targetClock = getSetClockFromWidget(targetWidget);
+
+        if(sourceClock == null || targetClock == null) return;
+
+        if(!sourceClock.getGroup().equals(targetClock.getGroup())) {
+            sourceClock.changeGroup(targetClock.getGroup());
+        }
+        targetClock.getGroup().replaceClock(
+                sourceClock, targetClock.getGroup().indexOf(targetClock));
+
+        sortClocks();
+    }
 
 }

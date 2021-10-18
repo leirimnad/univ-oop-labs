@@ -69,7 +69,7 @@ public class Timer extends SetClock {
             timeBox.getChildren().remove(restLabel);
             if (timeline != null) timeline.stop();
             updateWidget();
-            onUnset.handle(new ActionEvent());
+            if(onUnset != null) onUnset.handle(new ActionEvent());
         }
 
         if(playButton != null) playButton.setVisible(!to);

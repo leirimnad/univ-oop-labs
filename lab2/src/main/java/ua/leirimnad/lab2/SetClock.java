@@ -7,6 +7,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.Effect;
@@ -35,6 +36,7 @@ public abstract class SetClock {
     private EventHandler<ActionEvent> onTick;
     protected EventHandler<ActionEvent> onUnset;
     private EventHandler<DragEvent> onDrag;
+    private EventHandler<ActionEvent> onGoingOff;
 
     private String soundPath = "timerSound.mp3";
     private MediaPlayer soundPlayer;
@@ -43,46 +45,16 @@ public abstract class SetClock {
         this.timeCreated = Instant.now();
         this.group = group;
         createWidget();
-//        widget.setEffect(indicateEffect);
         setupContextMenu();
+        setupDragEvents();
         group.add(this);
         setIndicateEffect(300);
-        widget.setOnDragDetected(e-> {
-            System.out.println("drag started on "+this);
-            Dragboard db = widget.startDragAndDrop(TransferMode.ANY);
-            ClipboardContent content = new ClipboardContent();
-            content.putString("a");
-            db.setContent(content);
-            e.consume();
-        });
-        widget.setOnDragOver(e->{
-            if (e.getGestureSource() != widget) {
-                /* allow for both copying and moving, whatever user chooses */
-                e.acceptTransferModes(TransferMode.MOVE);
-            }
-            e.consume();
-        });
-        widget.setOnDragEntered(e->{
-            if (e.getGestureSource() != widget) {
-                System.out.println("dragged " + e.getGestureSource() + " on " + this);
-            }
-            e.consume();
-        });
-        widget.setOnDragDropped(e->{
-            System.out.println("drag dropped on "+e.getGestureTarget());
-            this.onDrag.handle(e);
-            e.consume();
-        });
-        widget.setOnDragDone(e->{
-
-            e.consume();
-        });
     }
 
     public void delete(){
         set(false);
         this.group.remove(this);
-        onDelete.handle(new ActionEvent());
+        if(onDelete != null) onDelete.handle(new ActionEvent());
     }
 
     public void setOnDelete(EventHandler<ActionEvent> handler) {
@@ -90,6 +62,9 @@ public abstract class SetClock {
     }
     public void setOnUnset(EventHandler<ActionEvent> handler) {
         onUnset = handler;
+    }
+    public void setOnGoingOff(EventHandler<ActionEvent> handler) {
+        onGoingOff = handler;
     }
     public void setOnTick(EventHandler<ActionEvent> handler) {
         onTick = handler;
@@ -113,6 +88,8 @@ public abstract class SetClock {
         soundPlayer = new MediaPlayer(sound);
         soundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         soundPlayer.play();
+
+        if(onGoingOff != null) onGoingOff.handle(new ActionEvent());
     }
 
     public void turnOff(){
@@ -127,6 +104,7 @@ public abstract class SetClock {
     public void changeGroup(SetClockGroup to){
         this.group.remove(this);
         to.add(this);
+        this.group = to;
     }
 
     public SetClockGroup getGroup() {
@@ -154,22 +132,38 @@ public abstract class SetClock {
         });
     }
 
+    private void setupDragEvents(){
+        widget.setOnDragDetected(e-> {
+            Dragboard db = widget.startDragAndDrop(TransferMode.ANY);
+            ClipboardContent content = new ClipboardContent();
+            content.putString("a");
+            db.setContent(content);
+            e.consume();
+        });
+
+        widget.setOnDragOver(e->{
+            if (e.getGestureSource() != widget) {
+                e.acceptTransferModes(TransferMode.MOVE);
+            }
+            e.consume();
+        });
+        widget.setOnDragDropped(e->{
+            if(onDrag != null) this.onDrag.handle(e);
+            e.consume();
+        });
+    }
+
     public void tick(){
         doTick();
-        onTick.handle(new ActionEvent());
+        if(onTick != null) onTick.handle(new ActionEvent());
     }
 
     public void setIndicateEffect(int ms){
-//        indicateEffect.setWidth(ms/100.0);
-//        indicateEffect.setHeight(ms/100.0);
         widget.setOpacity(0);
         Timeline timeline = new Timeline( new KeyFrame(Duration.millis(20), event -> {
             double opacity = widget.getOpacity()+20.0/ms;
             if(opacity > 1) opacity = 1;
             widget.setOpacity(opacity);
-//            indicateEffect.setWidth(size);
-//            indicateEffect.setHeight(size);
-//            widget.setEffect(indicateEffect);
         }));
         timeline.setCycleCount(ms/20);
         timeline.play();

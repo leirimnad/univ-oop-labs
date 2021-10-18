@@ -61,7 +61,7 @@ public class Alarm extends SetClock implements Serializable {
         } else {
             if(wentOff) turnOff();
             setAt = null;
-            onUnset.handle(new ActionEvent());
+            if(onUnset != null) onUnset.handle(new ActionEvent());
         }
 
         if(toggleSwitch != null) toggleSwitch.setSelected(to);
