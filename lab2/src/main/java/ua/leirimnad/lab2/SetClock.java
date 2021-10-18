@@ -37,6 +37,7 @@ public abstract class SetClock {
     protected EventHandler<ActionEvent> onUnset;
     private EventHandler<DragEvent> onDrag;
     private EventHandler<ActionEvent> onGoingOff;
+    private EventHandler<ActionEvent> onTurnOff;
 
     private String soundPath = "timerSound.mp3";
     private MediaPlayer soundPlayer;
@@ -65,6 +66,9 @@ public abstract class SetClock {
     }
     public void setOnGoingOff(EventHandler<ActionEvent> handler) {
         onGoingOff = handler;
+    }
+    public void setOnTurnOff(EventHandler<ActionEvent> handler) {
+        onTurnOff = handler;
     }
     public void setOnTick(EventHandler<ActionEvent> handler) {
         onTick = handler;
@@ -99,6 +103,9 @@ public abstract class SetClock {
         timeLabel.getStyleClass().remove("wentOffLabel");
         soundPlayer.stop();
         wentOff = false;
+        if(onTurnOff != null) {
+            onTurnOff.handle(new ActionEvent());
+        }
     }
 
     public void changeGroup(SetClockGroup to){

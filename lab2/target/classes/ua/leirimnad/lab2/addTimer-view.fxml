@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -13,15 +15,15 @@
 
 <AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="356.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ua.leirimnad.lab2.AddTimerController">
    <children>
-      <Label layoutX="35.0" layoutY="27.0" text="Створити">
+      <Label layoutX="60.0" layoutY="12.0" text="Створити">
          <font>
-            <Font name="Segoe UI" size="18.0" />
+            <Font name="Segoe UI Bold" size="18.0" />
          </font>
       </Label>
-      <SegmentedButton fx:id="segmentedButtonField" layoutX="128.0" layoutY="27.0" prefHeight="23.0" prefWidth="202.0" />
+      <SegmentedButton fx:id="segmentedButtonField" layoutX="148.0" layoutY="12.0" prefHeight="23.0" prefWidth="166.0" />
       <AnchorPane fx:id="timerPane" layoutX="69.0" layoutY="70.0" prefHeight="200.0" prefWidth="220.0">
          <children>
-            <VBox layoutX="1.0" prefHeight="173.0" prefWidth="186.0">
+            <VBox layoutX="6.0" layoutY="21.0" prefHeight="174.0" prefWidth="186.0">
                <children>
                   <AnchorPane prefHeight="56.0" prefWidth="200.0">
                      <children>
@@ -85,24 +87,27 @@
                   </AnchorPane>
                </children>
             </VBox>
-            <HBox layoutX="7.0" layoutY="216.0" spacing="4.0">
+            <HBox layoutX="7.0" layoutY="203.0" spacing="4.0">
                <children>
-                  <Label text="таймер спрацює в">
+                  <Label text="таймер спрацює в" textFill="#00000080">
                      <font>
                         <Font name="Segoe UI Italic" size="16.0" />
                      </font>
                   </Label>
-                  <Label fx:id="expectedEndTime" text="12:20:01">
+                  <Label fx:id="expectedEndTime" text="12:20:01" textFill="#0000007f">
                      <font>
                         <Font name="Segoe UI Bold Italic" size="16.0" />
                      </font>
                   </Label>
                </children>
             </HBox>
-            <Button fx:id="addButton" layoutX="54.0" layoutY="241.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="106.0" text="Додати" />
+            <Button id="addNewClockButton" fx:id="addButton" layoutX="57.0" layoutY="233.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="106.0" text="Додати">
+               <font>
+                  <Font name="Segoe UI" size="15.0" />
+               </font></Button>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="alarmPane" layoutX="14.0" layoutY="100.0" prefHeight="200.0" prefWidth="324.0" visible="false">
+      <AnchorPane fx:id="alarmPane" layoutX="14.0" layoutY="100.0" prefHeight="226.0" prefWidth="324.0" visible="false">
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="324.0">
                <children>
@@ -143,19 +148,26 @@
                   </Label>
                </children>
             </HBox>
-            <Label fx:id="timezoneLabel" alignment="CENTER" layoutX="47.0" layoutY="161.0" prefHeight="39.0" prefWidth="230.0" style="-fx-underline: true;" text="Локальний час" textFill="#a4a4a4">
+            <Label fx:id="timezoneLabel" alignment="CENTER" layoutX="47.0" layoutY="165.0" prefHeight="56.0" prefWidth="230.0" style="-fx-underline: true;" text="Локальний час" textAlignment="CENTER" textFill="#a4a4a4" textOverrun="CLIP" wrapText="true">
                <font>
                   <Font name="Segoe UI" size="20.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Label>
          </children>
       </AnchorPane>
-      <Button fx:id="startButton" layoutX="123.0" layoutY="335.0" mnemonicParsing="false" text="Запустити" textFill="#167505">
+      <Button id="startNewClockButton" fx:id="startButton" layoutX="126.0" layoutY="335.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="106.0" text="Запустити" textFill="#167505">
          <font>
-            <Font size="18.0" />
+            <Font name="Segoe UI" size="17.0" />
          </font>
       </Button>
-      <ComboBox fx:id="groupChooseBox" editable="true" layoutX="101.0" layoutY="50.0" prefWidth="150.0" promptText="Без групи" />
-      <Label layoutX="64.0" layoutY="54.0" text="Група" />
+      <ComboBox fx:id="groupChooseBox" editable="true" layoutX="148.0" layoutY="45.0" prefWidth="150.0" promptText="Без групи" />
+      <Label alignment="CENTER_RIGHT" layoutX="69.0" layoutY="45.0" prefHeight="25.0" prefWidth="74.0" text="в групi">
+         <font>
+            <Font name="Segoe UI Bold" size="16.0" />
+         </font></Label>
+      <Separator layoutX="-7.0" layoutY="79.0" prefHeight="6.0" prefWidth="366.0" />
    </children>
 </AnchorPane>

@@ -9,11 +9,11 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.WorldMapView?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="893.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ua.leirimnad.lab2.SelectTimezoneController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="580.0" prefWidth="893.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ua.leirimnad.lab2.SelectTimezoneController">
    <children>
       <WorldMapView disable="true" prefHeight="580.0" prefWidth="893.0" />
       <Slider fx:id="zoneSlider" blockIncrement="1.0" layoutX="5.0" layoutY="523.0" majorTickUnit="1.0" max="12.0" min="-11.0" minorTickCount="0" prefHeight="43.0" prefWidth="880.0" showTickMarks="true" snapToTicks="true" value="2.0" />
-      <HBox alignment="CENTER" layoutX="-2.0" layoutY="504.0" prefHeight="29.0" prefWidth="893.0" spacing="8.0">
+      <HBox alignment="CENTER" layoutX="-1.0" layoutY="498.0" prefHeight="29.0" prefWidth="893.0" spacing="8.0">
          <children>
             <Label fx:id="timezoneId" alignment="CENTER" style="-fx-background-color: #77FB; -fx-background-radius: 5;" text="UTC+2" textAlignment="JUSTIFY">
                <font>

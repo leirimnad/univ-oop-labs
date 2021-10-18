@@ -13,10 +13,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public class SetClockGroup {
     private String name;
@@ -130,7 +129,10 @@ public class SetClockGroup {
     private void createWidget(){
         widget = new VBox();
         widget.getStyleClass().add("groupBox");
-        // widget.setStyle("-fx-background-color:  #cff0ff"); // TODO: 17.10.2021 random color
+
+        widget.setStyle("-fx-background-color:  rgb("+getRandomNumber(180, 240)+","
+                +getRandomNumber(180, 240)+","
+                +getRandomNumber(180, 240)+")"); // TODO: 17.10.2021 random color
 
         HBox hBox = new HBox();
         hBox.getStyleClass().add("groupControlsBox");
@@ -182,4 +184,10 @@ public class SetClockGroup {
     public String toString() {
         return name;
     }
+
+    private int getRandomNumber(int min, int max) {
+        Random random = new Random();
+        return random.nextInt(max - min) + min;
+    }
+
 }

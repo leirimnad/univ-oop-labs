@@ -62,12 +62,12 @@ public class Timer extends SetClock {
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
         } else {
-            if(wentOff) turnOff();
             if(timeLabel != null) timeLabel.setTextFill(Color.BLACK);
             timeSet = null;
             currentDuration = totalDuration;
             timeBox.getChildren().remove(restLabel);
             if (timeline != null) timeline.stop();
+            if(wentOff) turnOff();
             updateWidget();
             if(onUnset != null) onUnset.handle(new ActionEvent());
         }
@@ -171,15 +171,14 @@ public class Timer extends SetClock {
         widget.getChildren().add(timeBox);
 
         pauseButton = new Button("⏸");
-        pauseButton.setPrefSize(40, 30);
+        pauseButton.getStyleClass().addAll("pauseTimerButton", "timerControlButton");
         pauseButton.setLayoutX(186);
         pauseButton.setLayoutY(32);
         pauseButton.setOnMouseClicked(e->pause(!paused));
         widget.getChildren().add(pauseButton);
 
         stopButton = new Button("⏹");
-        stopButton.setFont(Font.font("System", 9));
-        stopButton.setPrefSize(40, 30);
+        stopButton.getStyleClass().addAll("stopTimerButton", "timerControlButton");
         stopButton.setLayoutX(186);
         stopButton.setLayoutY(63);
         stopButton.setOnMouseClicked(e->{
@@ -188,9 +187,7 @@ public class Timer extends SetClock {
         widget.getChildren().add(stopButton);
 
         playButton = new Button("⏵");
-        playButton.setPadding(new Insets(-1, -1, -1, -1));
-        playButton.setFont(Font.font("System", 20));
-        playButton.setPrefSize(40, 62);
+        playButton.getStyleClass().addAll("startTimerButton", "timerControlButton");
         playButton.setLayoutX(186);
         playButton.setLayoutY(32);
         playButton.setOnMouseClicked(e->{

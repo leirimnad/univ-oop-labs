@@ -20,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -127,6 +128,9 @@ public class AddTimerController {
                 selectTimezoneStage.setTitle("Вибрати часову зону");
                 selectTimezoneStage.setScene(new Scene(selectTimezoneRoot));
                 selectTimezoneStage.setResizable(false);
+                selectTimezoneStage.getIcons().add(new Image(
+                        Objects.requireNonNull(TimerApplication.class.getResourceAsStream("timeZoneIcon.png"))
+                ));
                 SelectTimezoneController controller = loader.getController();
                 controller.initData(alarmTimeZone);
                 selectTimezoneStage.show();

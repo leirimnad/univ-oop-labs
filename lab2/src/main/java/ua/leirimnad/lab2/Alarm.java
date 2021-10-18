@@ -167,13 +167,10 @@ public class Alarm extends SetClock implements Serializable {
         widget.getChildren().add(toggleSwitch);
 
         timezoneLabel = new Label();
-        timezoneLabel.setFont(Font.font("Segoe UI", 16));
-        timezoneLabel.setTextFill(Color.web("#6f6f6f"));
-        timezoneLabel.setAlignment(Pos.CENTER);
-        timezoneLabel.setPrefSize(140, 15);
+        timezoneLabel.getStyleClass().add("timeZoneLabel");
         timezoneLabel.setVisible(false);
-        timeBox.setLayoutX(15);
-        timeBox.setLayoutY(0);
+        timezoneLabel.setLayoutX(14);
+        timezoneLabel.setLayoutY(12);
         widget.getChildren().add(timezoneLabel);
 
         if(!hasLocalTimeZone()){
@@ -182,17 +179,12 @@ public class Alarm extends SetClock implements Serializable {
         }
 
         timeLabel = new Label();
+        timeLabel.getStyleClass().add("alarmTimeLabel");
         timeLabel.setText(getTimeString(h, m));
-        timeLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 52));
-        timeLabel.setAlignment(Pos.CENTER);
         timeBox.getChildren().add(timeLabel);
 
         restLabel = new Label();
-        restLabel.setFont(Font.font("Segoe UI", 16));
-        restLabel.setTextFill(Color.web("#6f6f6f"));
-        restLabel.setAlignment(Pos.CENTER);
-        restLabel.setPrefSize(130, 15);
-        restLabel.setPadding(new Insets(-7, 0, 0, 0));
+        restLabel.getStyleClass().add("alarmRestLabel");
         timeBox.getChildren().add(restLabel);
 
     }

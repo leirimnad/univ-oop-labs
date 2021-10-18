@@ -12,6 +12,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -22,6 +23,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -74,22 +76,21 @@ public class TimerController {
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
 
-
-
         final ContextMenu sortContextMenu = new ContextMenu();
 
         sortContextMenu.getItems().add(new NamedSetClockComparator("☆ Новi",
                 (o1, o2) -> Long.signum(o1.timeCreated.until(o2.timeCreated, ChronoUnit.MILLIS))).createMenuItem());
         sortContextMenu.getItems().add(new NamedSetClockComparator("☾ Старi",
                 (o1, o2) -> -Long.signum(o1.timeCreated.until(o2.timeCreated, ChronoUnit.MILLIS))).createMenuItem());
-        sortContextMenu.getItems().add(new NamedSetClockComparator("↓ За часом спрацювання",
-                (o1, o2) -> -Long.signum(o1.getTimeLeft() - o2.getTimeLeft())).createMenuItem());
         sortContextMenu.getItems().add(new NamedSetClockComparator("↑ За часом спрацювання",
                 (o1, o2) -> Long.signum(o1.getTimeLeft() - o2.getTimeLeft())).createMenuItem());
-        sortContextMenu.getItems().add(new NamedSetClockComparator("↓ За тривалiстю",
-                (o1, o2) -> -Long.signum(o1.getTotalDuration() - o2.getTotalDuration())).createMenuItem());
+        sortContextMenu.getItems().add(new NamedSetClockComparator("↓ За часом спрацювання",
+                (o1, o2) -> -Long.signum(o1.getTimeLeft() - o2.getTimeLeft())).createMenuItem());
         sortContextMenu.getItems().add(new NamedSetClockComparator("↑ За тривалiстю",
                 (o1, o2) -> Long.signum(o1.getTotalDuration() - o2.getTotalDuration())).createMenuItem());
+        sortContextMenu.getItems().add(new NamedSetClockComparator("↓ За тривалiстю",
+                (o1, o2) -> -Long.signum(o1.getTotalDuration() - o2.getTotalDuration())).createMenuItem());
+
 
 
         sortButton.setOnMouseClicked(event -> sortContextMenu.show(sortButton, event.getScreenX(), event.getScreenY()));
@@ -100,6 +101,7 @@ public class TimerController {
 
         initialClockGroup = new SetClockGroup("Без групи");
         initialClockGroup.setStyleId("initialGroupBox");
+        initialClockGroup.getWidget().setStyle("");
         addGroup(initialClockGroup);
 
         addButton.setOnMouseClicked(event -> {
@@ -114,6 +116,9 @@ public class TimerController {
                 addTimerStage.setTitle("Створити таймер");
                 addTimerStage.setScene(new Scene(addTimerRoot));
                 addTimerStage.setResizable(false);
+                addTimerStage.getIcons().add(new Image(
+                        Objects.requireNonNull(TimerApplication.class.getResourceAsStream("addIcon.png"))
+                ));
 
                 addTimerStage.setOnCloseRequest(e->{
                     if(addTimerStage.getUserData() != null){
@@ -124,7 +129,7 @@ public class TimerController {
                             sortClocks();
                         });
                         // !!
-                        newSetClock.setOnGoingOff(ev->sortClocks());
+                        newSetClock.setOnTurnOff(ev->sortClocks());
                         if (addTimerStage.getUserData().getClass().equals(Alarm.class)){
                             alarms.add((Alarm) addTimerStage.getUserData());
                         }
@@ -171,9 +176,14 @@ public class TimerController {
         } catch (ConcurrentModificationException ignored){
 
         }
-        if(total > 0) scrollVBox.getChildren().remove(placeholderLabel);
-        else if(!scrollVBox.getChildren().contains(placeholderLabel))
+        if(total > 0) {
+            scrollVBox.setAlignment(Pos.TOP_LEFT);
+            scrollVBox.getChildren().remove(placeholderLabel);
+        }
+        else if(!scrollVBox.getChildren().contains(placeholderLabel)) {
+            scrollVBox.setAlignment(Pos.CENTER);
             scrollVBox.getChildren().add(0, placeholderLabel);
+        }
     }
 
     private void updateNearestClock(){

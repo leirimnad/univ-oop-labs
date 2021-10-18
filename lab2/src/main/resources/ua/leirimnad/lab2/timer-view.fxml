@@ -33,6 +33,7 @@
 -->
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -45,40 +46,52 @@
   <children>
       <AnchorPane prefHeight="51.0" prefWidth="782.0">
          <children>
-            <HBox prefHeight="70.0" prefWidth="200.0" style="-fx-border-radius: 0;">
+            <VBox>
                <children>
-                  <Button fx:id="addButton" mnemonicParsing="false" prefHeight="76.0" prefWidth="175.0" text="Додати" textFill="WHITE">
-                     <font>
-                        <Font name="Segoe UI Bold Italic" size="29.0" />
-                     </font>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Button>
+                  <HBox alignment="CENTER_LEFT" prefHeight="49.0" prefWidth="782.0">
+                     <children>
+                        <Button id="addClockButton" fx:id="addButton" graphicTextGap="0.0" mnemonicParsing="false" prefHeight="180.0" prefWidth="143.0" text="Додати" textFill="WHITE">
+                           <font>
+                              <Font name="Segoe UI" size="22.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </Button>
+                        <Button id="sortButton" fx:id="sortButton" mnemonicParsing="false" prefHeight="49.0" prefWidth="624.0" text="🠗 Сортувати">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </HBox>
                </children>
-            </HBox>
+            </VBox>
          </children>
       </AnchorPane>
-      <HBox prefHeight="24.0" prefWidth="782.0">
-         <children>
-            <Button fx:id="sortButton" mnemonicParsing="false" style="-fx-background-color: none;" text="🠗 Сортувати">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </Button>
-         </children>
-      </HBox>
       <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent;">
          <content>
-            <VBox fx:id="scrollVBox" spacing="20.0">
+            <VBox fx:id="scrollVBox" alignment="CENTER" spacing="20.0">
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
                <children>
                   <Label fx:id="placeholderLabel" text="Тут будуть вашi таймери..." textFill="#00000067">
                      <font>
-                        <Font name="Segoe UI Italic" size="15.0" />
+                        <Font name="Segoe UI Italic" size="23.0" />
                      </font>
+                     <padding>
+                        <Insets top="50.0" />
+                     </padding>
                   </Label>
                </children>
             </VBox>
