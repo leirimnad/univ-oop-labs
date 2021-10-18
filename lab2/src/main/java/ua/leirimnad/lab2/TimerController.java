@@ -4,30 +4,24 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.IntegerBinding;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javax.imageio.ImageIO;
@@ -38,6 +32,8 @@ public class TimerController {
     List<SetClockGroup> groups = new ArrayList<>();
     SetClockGroup initialClockGroup;
     SetClock nearestClock;
+    NamedSetClockComparator selectedComparator;
+    NamedSetClockComparator customOrderComparator = new NamedSetClockComparator("☝ Свiй порядок", (o1, o2) -> 0);
 
     @FXML
     private ResourceBundle resources;
@@ -67,6 +63,7 @@ public class TimerController {
                 alarm.tick();
             }
 
+            // sortClocks();
             updateNearestClock();
             float progress;
             if(nearestClock == null) progress = -1;
@@ -75,6 +72,30 @@ public class TimerController {
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+
+
+
+        final ContextMenu sortContextMenu = new ContextMenu();
+
+        sortContextMenu.getItems().add(new NamedSetClockComparator("☆ Новi",
+                (o1, o2) -> Long.signum(o1.timeCreated.until(o2.timeCreated, ChronoUnit.MILLIS))).createMenuItem());
+        sortContextMenu.getItems().add(new NamedSetClockComparator("☾ Старi",
+                (o1, o2) -> -Long.signum(o1.timeCreated.until(o2.timeCreated, ChronoUnit.MILLIS))).createMenuItem());
+        sortContextMenu.getItems().add(new NamedSetClockComparator("↓ За часом спрацювання",
+                (o1, o2) -> -Long.signum(o1.getTimeLeft() - o2.getTimeLeft())).createMenuItem());
+        sortContextMenu.getItems().add(new NamedSetClockComparator("↑ За часом спрацювання",
+                (o1, o2) -> Long.signum(o1.getTimeLeft() - o2.getTimeLeft())).createMenuItem());
+        sortContextMenu.getItems().add(new NamedSetClockComparator("↓ За тривалiстю",
+                (o1, o2) -> -Long.signum(o1.getTotalDuration() - o2.getTotalDuration())).createMenuItem());
+        sortContextMenu.getItems().add(new NamedSetClockComparator("↑ За тривалiстю",
+                (o1, o2) -> Long.signum(o1.getTotalDuration() - o2.getTotalDuration())).createMenuItem());
+
+
+        sortButton.setOnMouseClicked(event -> sortContextMenu.show(sortButton, event.getScreenX(), event.getScreenY()));
+
+
+        setClockSortingComparator(new NamedSetClockComparator("↓ Сортувати...",
+                (o1, o2) -> -Long.signum(o1.timeCreated.until(o2.timeCreated, ChronoUnit.MILLIS))));
 
         initialClockGroup = new SetClockGroup("Без групи");
         initialClockGroup.setStyleId("initialGroupBox");
@@ -100,23 +121,43 @@ public class TimerController {
                             updateGroups();
                             updateNearestClock();
                         });
+                        newSetClock.setOnTick(ev->sortClocks());
+                        newSetClock.setOnDelete(ev->sortClocks());
+                        newSetClock.setOnUnset(ev->sortClocks());
                         if (addTimerStage.getUserData().getClass().equals(Alarm.class)){
                             alarms.add((Alarm) addTimerStage.getUserData());
                         }
                         if(!groups.contains(newSetClock.getGroup())){
                             addGroup(newSetClock.getGroup());
                         }
+                        newSetClock.setOnDrag(dragEvent->{
+                            setClockSortingComparator(customOrderComparator);
+                            System.out.println(dragEvent.getGestureSource().getClass().getName());
+                            AnchorPane sourceWidget = (AnchorPane) dragEvent.getGestureSource();
+
+                            System.out.println("Type is "+dragEvent.getGestureTarget().getClass().getName());
+                            AnchorPane targetWidget = (AnchorPane) dragEvent.getGestureTarget();
+
+                            SetClock sourceClock = getSetClockFromWidget(sourceWidget);
+                            SetClock targetClock = getSetClockFromWidget(targetWidget);
+                            assert sourceClock != null;
+                            assert targetClock != null;
+                            if(!sourceClock.getGroup().equals(targetClock.getGroup())) return;
+                            targetClock.getGroup().replaceClock(
+                                    sourceClock, targetClock.getGroup().indexOf(targetClock));
+                            System.out.println("DRAG "+sourceClock+"\nON "+targetClock);
+                            sortClocks();
+                        });
+
                         updateGroups();
                         updateNearestClock();
+                        sortClocks();
                     }
                 });
                 addTimerStage.show();
             } catch (java.io.IOException e) {
                 e.printStackTrace();
             }
-        });
-        sortButton.setOnMouseClicked(event -> {
-                // writeGroupsToFile();
         });
 
     }
@@ -210,5 +251,52 @@ public class TimerController {
         }
 
     }
+
+    private void setClockSortingComparator(NamedSetClockComparator comparator){
+        selectedComparator = comparator;
+        sortButton.setText(comparator.getName());
+        sortClocks();
+    }
+
+    private void sortClocks(){
+        for (SetClockGroup group : groups){
+            group.sortClocks(selectedComparator.getComparator());
+        }
+    }
+
+    private class NamedSetClockComparator {
+        String name;
+        Comparator<SetClock> comparator;
+
+        public NamedSetClockComparator(String name, Comparator<SetClock> comparator){
+            this.name = name;
+            this.comparator = comparator;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Comparator<SetClock> getComparator() {
+            return comparator;
+        }
+
+        public MenuItem createMenuItem(){
+            MenuItem it = new MenuItem(name);
+            it.setOnAction(e->setClockSortingComparator(this));
+            return it;
+        }
+    }
+
+    private SetClock getSetClockFromWidget(AnchorPane widget){
+        for (SetClockGroup group : groups){
+            for (SetClock clock : group.getSetClocks())
+                if(clock.getWidget().equals(widget))
+                    return clock;
+        }
+        return null;
+    }
+
+
 
 }

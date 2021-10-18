@@ -2,6 +2,7 @@ package ua.leirimnad.lab2;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -11,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -56,7 +58,7 @@ public class Timer extends SetClock {
             currentDuration = totalDuration;
             timeBox.getChildren().add(restLabel);
 
-            timeline = new Timeline( new KeyFrame(Duration.seconds(1), event -> secondTick()));
+            timeline = new Timeline( new KeyFrame(Duration.seconds(1), event -> tick()));
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
         } else {
@@ -67,6 +69,7 @@ public class Timer extends SetClock {
             timeBox.getChildren().remove(restLabel);
             if (timeline != null) timeline.stop();
             updateWidget();
+            onUnset.handle(new ActionEvent());
         }
 
         if(playButton != null) playButton.setVisible(!to);
@@ -127,7 +130,8 @@ public class Timer extends SetClock {
         return res;
     }
 
-    private void secondTick(){
+    @Override
+    protected void doTick(){
         if(currentDuration > 0) currentDuration -= 1;
 
         if (!wentOff && currentDuration == 0){
@@ -138,6 +142,7 @@ public class Timer extends SetClock {
         updateWidget();
     }
 
+    @Override
     protected void updateWidget(){
         timeLabel.setText(getDurationString(currentDuration));
         if(!paused)
@@ -210,6 +215,14 @@ public class Timer extends SetClock {
         restLabel.setAlignment(Pos.CENTER);
         restLabel.setPrefSize(130, 15);
         restLabel.setPadding(new Insets(-7, 0, 0, 0));
+    }
+
+    @Override
+    protected void showNotification() {
+        Notifications.create()
+                .title("Таймер")
+                .text("Спрацював таймер\nУсього часу: "+Timer.getDurationString(totalDuration))
+                .showWarning();
     }
 
 

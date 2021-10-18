@@ -1,19 +1,27 @@
 package ua.leirimnad.lab2;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.effect.Effect;
+import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Comparator;
+
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
 
 public abstract class SetClock {
@@ -24,6 +32,9 @@ public abstract class SetClock {
     protected boolean wentOff = false;
     protected boolean set;
     private EventHandler<ActionEvent> onDelete;
+    private EventHandler<ActionEvent> onTick;
+    protected EventHandler<ActionEvent> onUnset;
+    private EventHandler<DragEvent> onDrag;
 
     private String soundPath = "timerSound.mp3";
     private MediaPlayer soundPlayer;
@@ -32,8 +43,40 @@ public abstract class SetClock {
         this.timeCreated = Instant.now();
         this.group = group;
         createWidget();
+//        widget.setEffect(indicateEffect);
         setupContextMenu();
         group.add(this);
+        setIndicateEffect(300);
+        widget.setOnDragDetected(e-> {
+            System.out.println("drag started on "+this);
+            Dragboard db = widget.startDragAndDrop(TransferMode.ANY);
+            ClipboardContent content = new ClipboardContent();
+            content.putString("a");
+            db.setContent(content);
+            e.consume();
+        });
+        widget.setOnDragOver(e->{
+            if (e.getGestureSource() != widget) {
+                /* allow for both copying and moving, whatever user chooses */
+                e.acceptTransferModes(TransferMode.MOVE);
+            }
+            e.consume();
+        });
+        widget.setOnDragEntered(e->{
+            if (e.getGestureSource() != widget) {
+                System.out.println("dragged " + e.getGestureSource() + " on " + this);
+            }
+            e.consume();
+        });
+        widget.setOnDragDropped(e->{
+            System.out.println("drag dropped on "+e.getGestureTarget());
+            this.onDrag.handle(e);
+            e.consume();
+        });
+        widget.setOnDragDone(e->{
+
+            e.consume();
+        });
     }
 
     public void delete(){
@@ -45,11 +88,23 @@ public abstract class SetClock {
     public void setOnDelete(EventHandler<ActionEvent> handler) {
         onDelete = handler;
     }
+    public void setOnUnset(EventHandler<ActionEvent> handler) {
+        onUnset = handler;
+    }
+    public void setOnTick(EventHandler<ActionEvent> handler) {
+        onTick = handler;
+    }
+    public void setOnDrag(EventHandler<DragEvent> handler) {
+        onDrag = handler;
+    }
+
 
     public void goOff(){
         if(wentOff) return;
 
         wentOff = true;
+
+        showNotification();
 
         timeLabel.getStyleClass().add("wentOffLabel");
         widget.getStyleClass().add("wentOffWidget");
@@ -99,14 +154,38 @@ public abstract class SetClock {
         });
     }
 
+    public void tick(){
+        doTick();
+        onTick.handle(new ActionEvent());
+    }
+
+    public void setIndicateEffect(int ms){
+//        indicateEffect.setWidth(ms/100.0);
+//        indicateEffect.setHeight(ms/100.0);
+        widget.setOpacity(0);
+        Timeline timeline = new Timeline( new KeyFrame(Duration.millis(20), event -> {
+            double opacity = widget.getOpacity()+20.0/ms;
+            if(opacity > 1) opacity = 1;
+            widget.setOpacity(opacity);
+//            indicateEffect.setWidth(size);
+//            indicateEffect.setHeight(size);
+//            widget.setEffect(indicateEffect);
+        }));
+        timeline.setCycleCount(ms/20);
+        timeline.play();
+    }
+
     public boolean isSet(){
         return set;
     }
 
     protected abstract void updateWidget();
     protected abstract void createWidget();
+    protected abstract void showNotification();
+    protected abstract void doTick();
     public abstract long getTotalDuration();
     public abstract long getTimeLeft();
     public abstract void set(boolean to);
+
 
 }

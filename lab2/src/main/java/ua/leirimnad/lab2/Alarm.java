@@ -2,6 +2,7 @@ package ua.leirimnad.lab2;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -13,6 +14,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 import org.controlsfx.control.ToggleSwitch;
 
 import java.io.Serializable;
@@ -59,6 +61,7 @@ public class Alarm extends SetClock implements Serializable {
         } else {
             if(wentOff) turnOff();
             setAt = null;
+            onUnset.handle(new ActionEvent());
         }
 
         if(toggleSwitch != null) toggleSwitch.setSelected(to);
@@ -99,7 +102,8 @@ public class Alarm extends SetClock implements Serializable {
         return secondsUntil(h, m, null);
     }
 
-    public void tick(){
+    @Override
+    protected void doTick(){
         if (set && Instant.now().isAfter(setTo) && !wentOff){
             goOff();
         }
@@ -107,9 +111,10 @@ public class Alarm extends SetClock implements Serializable {
         updateWidget();
     }
 
+    @Override
     protected void updateWidget(){
         timeLabel.setText(getTimeString(h, m));
-        if(timeZone != null && !timeZone.equals(TimeZone.getTimeZone(ZoneId.systemDefault()))) {
+        if(!hasLocalTimeZone()) {
             timezoneLabel.setText(timeZone.getDisplayName(Locale.ENGLISH));
             timezoneLabel.setVisible(true);
         } else timeBox.getChildren().remove(timezoneLabel);
@@ -119,6 +124,10 @@ public class Alarm extends SetClock implements Serializable {
             if (wentOff)
                 restLabel.setText("зараз");
         }
+    }
+
+    private boolean hasLocalTimeZone(){
+        return timeZone == null || timeZone.equals(TimeZone.getTimeZone(ZoneId.systemDefault()));
     }
 
     static public String getTimeString(int h, int m){
@@ -167,7 +176,7 @@ public class Alarm extends SetClock implements Serializable {
         timeBox.setLayoutY(0);
         widget.getChildren().add(timezoneLabel);
 
-        if(timeZone != null && !timeZone.equals(TimeZone.getTimeZone(ZoneId.systemDefault()))){
+        if(!hasLocalTimeZone()){
             timezoneLabel.setText(timeZone.getDisplayName(Locale.ENGLISH));
             timezoneLabel.setVisible(true);
         }
@@ -189,8 +198,23 @@ public class Alarm extends SetClock implements Serializable {
     }
 
     @Override
+    protected void showNotification() {
+        String text = "Спрацював будильник на "+Alarm.getTimeString(h, m);
+        if(!hasLocalTimeZone())
+            text += "\n(" + timeZone.getDisplayName(Locale.ENGLISH) + ")";
+        Notifications.create()
+                .title("Будильник")
+                .text(text)
+                .showWarning();
+    }
+
+    public Instant nextTrigger(){
+        return nextInstant(h, m, timeZone);
+    }
+
+    @Override
     public long getTotalDuration() {
-        if(!set) return -1;
+        if(!set) return Instant.now().until(nextTrigger(), ChronoUnit.MILLIS);
         return setAt.until(setTo, ChronoUnit.MILLIS);
     }
 

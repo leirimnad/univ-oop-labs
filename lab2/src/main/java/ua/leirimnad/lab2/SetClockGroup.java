@@ -9,7 +9,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class SetClockGroup {
     private String name;
@@ -36,9 +38,28 @@ public class SetClockGroup {
         if(widget != null) updateWidget();
     }
 
+    public void replaceClock(SetClock setClock, int pos) {
+        if(!setClocks.contains(setClock))
+            throw new NoSuchElementException("There is no such clock in the group to be replaced");
+        if(pos < 0 || pos > setClocks.size()-1)
+            throw new IndexOutOfBoundsException("Incorrect position argument");
+
+        setClocks.remove(setClock);
+        setClocks.add(pos, setClock);
+        setClock.setIndicateEffect(300);
+        if(widget != null) updateWidget();
+    }
+
+    public int indexOf(SetClock setClock){
+        return setClocks.indexOf(setClock);
+    }
+
     public void updateWidget(){
+        if(widget == null) return;
         flowPane.getChildren().clear();
-        for (SetClock clock : setClocks){
+        for (int i = 0; i < setClocks.size(); i++) {
+
+            SetClock clock = setClocks.get(i);
             flowPane.getChildren().add(clock.getWidget());
         }
         this.widget.setId(styleId);
@@ -110,6 +131,16 @@ public class SetClockGroup {
 
     public int size(){
         return setClocks.size();
+    }
+
+    public void sortClocks(Comparator<SetClock> comparator){
+        List<SetClock> prevClocks = new ArrayList<>(setClocks);
+        this.setClocks.sort(comparator);
+        for (int i=0; i < setClocks.size(); i++){
+            if(!setClocks.get(i).equals(prevClocks.get(i)))
+                setClocks.get(i).setIndicateEffect(300);
+        }
+        updateWidget();
     }
 
     @Override
