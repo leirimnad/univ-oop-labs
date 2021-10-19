@@ -98,7 +98,6 @@ public class Timer extends SetClock {
         updateWidget();
     }
 
-
     /**
      * Returns time that left, in milliseconds.
      * @return milliseconds left

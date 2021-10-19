@@ -7,7 +7,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.control.ToggleSwitch;
-import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -20,7 +19,7 @@ import java.util.TimeZone;
 /**
  * Class representing an alarms which goes off at a certain time.
  */
-public class Alarm extends SetClock implements Serializable {
+public class Alarm extends SetClock  {
     private final int h, m;
     private final TimeZone timeZone;
     private Instant setTo, setAt;

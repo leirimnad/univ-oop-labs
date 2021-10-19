@@ -190,7 +190,7 @@ public class SetClockGroup {
 
         widget.setStyle("-fx-background-color:  rgb("+getRandomNumber(180, 240)+","
                 +getRandomNumber(180, 240)+","
-                +getRandomNumber(180, 240)+")"); // TODO: 17.10.2021 random color
+                +getRandomNumber(180, 240)+")");
 
         HBox hBox = new HBox();
         hBox.getStyleClass().add("groupControlsBox");
