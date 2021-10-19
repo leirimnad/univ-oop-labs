@@ -1,20 +1,17 @@
 package ua.leirimnad.lab2;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
-import java.io.File;
 import java.io.IOException;
 
+/**
+ * Base class for the timer application.
+ * Starts the app.
+ */
 public class TimerApplication extends Application {
-    private double xOffset = 0;
-    private double yOffset = 0;
 
     @Override
     public void start(Stage stage) throws IOException {

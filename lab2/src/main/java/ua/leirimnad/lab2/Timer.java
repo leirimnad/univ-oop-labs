@@ -20,21 +20,25 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 
+/**
+ * Class representing a timer that goes off after a certain time.
+ */
 public class Timer extends SetClock {
     private boolean paused;
-    private long totalDuration;
+    private final long totalDuration;
     private long currentDuration;
-    private Instant timeSet;
+
     private Label restLabel;
     private Timeline timeline;
     private Button playButton, stopButton, pauseButton;
     private VBox timeBox;
 
 
-    public Timer(int hours, int minutes, int seconds, SetClockGroup group){
-        this(hours * 3600L + minutes * 60L + seconds, group);
-    }
-
+    /**
+     * Creates a timer with set amount of seconds and a group.
+     * @param seconds timer's total duration
+     * @param group timer's group
+     */
     public Timer(long seconds, SetClockGroup group) {
         super(group);
         totalDuration = currentDuration = seconds;
@@ -42,10 +46,10 @@ public class Timer extends SetClock {
         updateWidget();
     }
 
-    public void set(){
-        set(true);
-    }
-
+    /**
+     * Sets or unsets a timer.
+     * @param to true for setting, false for unsetting
+     */
     @Override
     public void set(boolean to) {
         if(set == to) return;
@@ -54,7 +58,6 @@ public class Timer extends SetClock {
 
         if(to) {
             if(pauseButton != null) pauseButton.setDisable(false);
-            timeSet = Instant.now();
             currentDuration = totalDuration;
             timeBox.getChildren().add(restLabel);
 
@@ -63,7 +66,6 @@ public class Timer extends SetClock {
             timeline.play();
         } else {
             if(timeLabel != null) timeLabel.setTextFill(Color.BLACK);
-            timeSet = null;
             currentDuration = totalDuration;
             timeBox.getChildren().remove(restLabel);
             if (timeline != null) timeline.stop();
@@ -79,10 +81,11 @@ public class Timer extends SetClock {
         updateWidget();
     }
 
-    public void pause(){
-        pause(true);
-    }
 
+    /**
+     * Pauses or unpauses a timer. While paused, timer is not subtracting seconds from it's time left.
+     * @param to <code>true</code> for pause, <code>false</code> for unpause
+     */
     public void pause(boolean to){
         paused = to;
         if(to){
@@ -95,20 +98,32 @@ public class Timer extends SetClock {
         updateWidget();
     }
 
+
+    /**
+     * Returns time that left, in milliseconds.
+     * @return milliseconds left
+     */
     @Override
     public long getTimeLeft(){
         return currentDuration*1000;
     }
 
+    /**
+     * Returns total timer time, in milliseconds.
+     * @return milliseconds total
+     */
     @Override
     public long getTotalDuration() {
         return totalDuration*1000;
     }
 
-    public boolean wentOff(){
-        return wentOff;
-    }
 
+    /**
+     * Returns a string representing time after sec in 24-hour format.
+     * @param sec seconds
+     * @param formatStyle short, medium, long or full
+     * @return string representation
+     */
     public static String getEndTimeString(long sec, FormatStyle formatStyle){
         DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedTime( formatStyle )
                 .withZone( ZoneId.systemDefault() );
@@ -116,6 +131,11 @@ public class Timer extends SetClock {
         return formatter.format(time);
     }
 
+    /**
+     * Returns a string representing duration of sec <code>[h:]m:s</code> format.
+     * @param sec duration in seconds
+     * @return string representation
+     */
     public static String getDurationString(long sec){
         String res = "";
         long hours = sec / 3600;
@@ -130,6 +150,10 @@ public class Timer extends SetClock {
         return res;
     }
 
+    /**
+     * Subtracts a second from timer and checks if it has to go off.
+     * For code use {@link #tick()}.
+     */
     @Override
     protected void doTick(){
         if(currentDuration > 0) currentDuration -= 1;
@@ -142,6 +166,9 @@ public class Timer extends SetClock {
         updateWidget();
     }
 
+    /**
+     * Updates time and time left labels of a widget.
+     */
     @Override
     protected void updateWidget(){
         timeLabel.setText(getDurationString(currentDuration));
@@ -154,6 +181,9 @@ public class Timer extends SetClock {
 
     }
 
+    /**
+     * Creates a widget for timer.
+     */
     @Override
     protected void createWidget(){
         if(widget != null) return;
@@ -214,6 +244,9 @@ public class Timer extends SetClock {
         restLabel.setPadding(new Insets(-7, 0, 0, 0));
     }
 
+    /**
+     * Shows user a notification with details about the timer.
+     */
     @Override
     protected void showNotification() {
         Notifications.create()

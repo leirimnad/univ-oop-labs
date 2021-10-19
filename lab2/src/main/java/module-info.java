@@ -11,6 +11,7 @@ module ua.leirimnad.lab2 {
     requires eu.hansolo.tilesfx;
     requires javafx.media;
     requires java.desktop;
+//    requires rt;
 
     opens ua.leirimnad.lab2 to javafx.fxml;
     exports ua.leirimnad.lab2;
