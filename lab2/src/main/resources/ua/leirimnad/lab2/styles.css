@@ -187,7 +187,7 @@
     -fx-background-color: transparent;
     -fx-background-insets: 0,9 9 8 9,9,10,11;
     -fx-background-radius: 50;
-    -fx-padding: 0 0 0 15;
+    -fx-padding: 0 15 0 15;
     -fx-font-family: "Helvetica";
     -fx-alignment: center-left;
     -fx-font-size: 16px;

@@ -61,13 +61,16 @@
                               <Insets />
                            </opaqueInsets>
                         </Button>
-                        <Button id="sortButton" fx:id="sortButton" mnemonicParsing="false" prefHeight="49.0" prefWidth="624.0" text="🠗 Сортувати">
+                        <Button id="sortButton" fx:id="sortButton" mnemonicParsing="false" prefHeight="49.0" text="🠗 Сортувати">
                            <font>
                               <Font size="13.0" />
                            </font>
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
                         </Button>
                      </children>
                      <VBox.margin>

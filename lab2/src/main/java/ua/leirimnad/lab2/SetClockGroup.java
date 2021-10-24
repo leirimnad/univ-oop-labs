@@ -7,10 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import java.util.*;
 
@@ -54,7 +51,9 @@ public class SetClockGroup {
      */
     public void remove(SetClock setClock){
         setClocks.remove(setClock);
-        if(widget != null) updateWidget();
+        if(widget != null) {
+            updateWidget();
+        }
         if(onClockListChange != null) onClockListChange.handle(new ActionEvent());
     }
 
@@ -93,12 +92,14 @@ public class SetClockGroup {
         if(widget == null) return;
 
         ObservableList<Node> children = flowPane.getChildren();
+        List<Node> prevClocks = new ArrayList<>(children);
+
         for (int i=0; i < Math.max(children.size(), setClocks.size()); i++){
             Node child = (children.size() - 1 < i ? null : children.get(i));
             Node widget = (setClocks.size() - 1 < i ? null : setClocks.get(i).getWidget());
 
             if(i > setClocks.size() - 1){
-                children.remove(i, children.size()-1);
+                children.remove(i, children.size());
                 break;
             }
             if(i > children.size() - 1){
@@ -114,6 +115,14 @@ public class SetClockGroup {
                     children.set(children.indexOf(widget), nullNode);
                 }
                 children.set(i, widget);
+            }
+        }
+
+        for (int i=0; i < Math.min(children.size(), prevClocks.size()); i++){
+            if(!children.get(i).equals(prevClocks.get(i))) {
+                AnchorPane widget = (AnchorPane) children.get(i);
+                SetClock clock = getSetClockFromWidget(widget);
+                if(clock != null) clock.setIndicateEffect(300);
             }
         }
         this.widget.setId(styleId);
@@ -238,12 +247,7 @@ public class SetClockGroup {
      * @param comparator clock comparator
      */
     public void sortClocks(Comparator<SetClock> comparator){
-        List<SetClock> prevClocks = new ArrayList<>(setClocks);
         this.setClocks.sort(comparator);
-        for (int i=0; i < setClocks.size(); i++){
-            if(!setClocks.get(i).equals(prevClocks.get(i)))
-                setClocks.get(i).setIndicateEffect(300);
-        }
         updateWidget();
     }
 
@@ -264,6 +268,18 @@ public class SetClockGroup {
     private int getRandomNumber(int min, int max) {
         Random random = new Random();
         return random.nextInt(max - min) + min;
+    }
+
+    /**
+     * Gets a {@link SetClock#SetClock SetClock} of this group by a given {@link SetClock#SetClock SetClock} widget.
+     * @param widget widget of a clock
+     * @return clock
+     */
+    private SetClock getSetClockFromWidget(AnchorPane widget){
+        for (SetClock clock : setClocks)
+            if(clock.getWidget().equals(widget))
+                return clock;
+        return null;
     }
 
 }

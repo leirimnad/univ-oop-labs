@@ -129,6 +129,7 @@ public class TimerController {
                         newSetClock.setOnDelete(ev-> {
                             updateNearestClock();
                             sortClocks();
+                            updateGroups();
                         });
                         newSetClock.setOnTurnOff(ev->sortClocks());
                         newSetClock.setOnDrag(this::handleDrag);

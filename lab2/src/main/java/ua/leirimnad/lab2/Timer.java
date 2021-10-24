@@ -1,5 +1,6 @@
 package ua.leirimnad.lab2;
 
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -54,7 +55,8 @@ public class Timer extends SetClock {
     public void set(boolean to) {
         if(set == to) return;
         set = to;
-        paused = false;
+        pause(false);
+        //paused = false;
 
         if(to) {
             if(pauseButton != null) pauseButton.setDisable(false);
@@ -65,6 +67,7 @@ public class Timer extends SetClock {
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
         } else {
+
             if(timeLabel != null) timeLabel.setTextFill(Color.BLACK);
             currentDuration = totalDuration;
             timeBox.getChildren().remove(restLabel);
@@ -89,11 +92,11 @@ public class Timer extends SetClock {
     public void pause(boolean to){
         paused = to;
         if(to){
-            timeline.pause();
-            pauseButton.setText(playButton.getText());
+            if(timeline != null) timeline.pause();
+            if(pauseButton != null) pauseButton.setText(playButton.getText());
         } else {
-            timeline.play();
-            pauseButton.setText("⏸");
+            if(timeline != null && timeline.getStatus().equals(Animation.Status.PAUSED)) timeline.play();
+            if(pauseButton != null) pauseButton.setText("⏸");
         }
         updateWidget();
     }
